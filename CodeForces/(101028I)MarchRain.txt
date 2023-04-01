@@ -1,0 +1,91 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include <cmath>
+using namespace std;
+
+bool IsValidLength(vector<unsigned long long>& HolesPositions, unsigned long long StripWithMaxLength, unsigned long long NumberOfStrips)
+{
+    bool Result = false;
+    unsigned int CoveredHoles = 0;
+    long long StartingHolePosition = 0, EndingHolePosition = 1;
+    while (NumberOfStrips && (EndingHolePosition < HolesPositions.size()))
+    {
+        if ((HolesPositions[EndingHolePosition] - (HolesPositions[StartingHolePosition] - 1)) <= StripWithMaxLength)
+            ++EndingHolePosition;
+        else
+        {
+            StartingHolePosition = EndingHolePosition;
+            CoveredHoles = EndingHolePosition;
+            ++EndingHolePosition;
+            --NumberOfStrips;
+        }
+    }
+
+    if (0 < NumberOfStrips)
+    {
+        if (EndingHolePosition == HolesPositions.size())
+            --EndingHolePosition;
+        if ((HolesPositions[EndingHolePosition] - (HolesPositions[StartingHolePosition] - 1)) <= StripWithMaxLength)
+        {
+            ++EndingHolePosition;
+            CoveredHoles = EndingHolePosition;
+            --NumberOfStrips;
+        }
+    }
+    if (0 <= NumberOfStrips && CoveredHoles == HolesPositions.size())
+        Result = true;
+    return Result;
+}
+
+void ProblemAnswer()
+{
+    unsigned long long NumberOfHoles, NumberOfStrips, StripPossilbleMaxLength, StripPossibleMinLength, Temp, StripWithMaxLength,MinLength;
+    vector<unsigned long long> HolesPositions;
+    MinLength = 1000000001;
+    cin >> NumberOfHoles >> NumberOfStrips;
+    for (unsigned int i = 0; i < NumberOfHoles; i++)
+    {
+        cin >> Temp;
+        HolesPositions.push_back(Temp);
+    }
+
+    StripPossilbleMaxLength = (HolesPositions[NumberOfHoles - 1]) - ((HolesPositions[0] - 1) + (NumberOfStrips - 1));
+    StripPossibleMinLength = ceil((double)NumberOfHoles / (double)NumberOfStrips);
+    
+    while (StripPossibleMinLength < (StripPossilbleMaxLength - 1))
+    {
+        StripWithMaxLength = (StripPossilbleMaxLength + StripPossibleMinLength) / 2;
+        if (IsValidLength(HolesPositions, StripWithMaxLength, NumberOfStrips))
+        {
+            StripPossilbleMaxLength = StripWithMaxLength;
+            if (StripWithMaxLength < MinLength)
+                MinLength = StripWithMaxLength;
+        }
+        else
+            StripPossibleMinLength = StripWithMaxLength + 1;
+    }
+
+    if (IsValidLength(HolesPositions, StripPossibleMinLength, NumberOfStrips))
+    {
+        if (StripPossibleMinLength < MinLength)
+            MinLength = StripPossibleMinLength;
+    }
+
+    if (IsValidLength(HolesPositions, StripPossilbleMaxLength, NumberOfStrips))
+    {
+        if (StripPossilbleMaxLength < MinLength)
+            MinLength = StripPossilbleMaxLength;
+    }
+    cout << MinLength << "\n";
+}
+
+int main()
+{
+    unsigned int NumberOfTestCases;
+    cin >> NumberOfTestCases;
+    while (NumberOfTestCases--)
+    {
+        ProblemAnswer();
+    }
+}
