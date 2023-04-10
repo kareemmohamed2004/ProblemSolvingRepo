@@ -1,0 +1,73 @@
+#include<iostream>
+#include<vector>
+#include<algorithm> 
+using namespace std; 
+
+unsigned int GetIndexOfTheNextGreaterValue(vector<unsigned int>& Elements, unsigned int CurrentMedianValue, unsigned int IndexOfLastGreaterValue)
+{ 
+	while (CurrentMedianValue == Elements[IndexOfLastGreaterValue]) 
+	{
+		if (IndexOfLastGreaterValue < (Elements.size() - 1)) 
+			++IndexOfLastGreaterValue; 
+		else 
+			return IndexOfLastGreaterValue; 
+	} 
+	return IndexOfLastGreaterValue; 
+}
+
+unsigned int GetMaximumMedianByUsingMaximumNumberOfOperations(vector<unsigned int>& Elements, unsigned int MaximumNumberOfOperations)
+{ 
+	unsigned long long MedianIndex, MedianValue, IndexOfTheNextGreaterValue, NextGreaterValue, NumberOfNeededOperations;
+	bool IsMaximumMedianReached = false, IsLastIndexReached = false;
+	MedianIndex = Elements.size() / 2; 
+	MedianValue = Elements[MedianIndex];
+	IndexOfTheNextGreaterValue = MedianIndex;
+	if (MedianIndex < Elements.size() - 1)
+		IndexOfTheNextGreaterValue = MedianIndex + 1;
+	while (!IsMaximumMedianReached)
+	{
+		IndexOfTheNextGreaterValue = GetIndexOfTheNextGreaterValue(Elements, MedianValue, IndexOfTheNextGreaterValue);
+		NextGreaterValue = Elements[IndexOfTheNextGreaterValue];
+		if (MedianValue < NextGreaterValue)
+		{
+			NumberOfNeededOperations = (NextGreaterValue - MedianValue) * (IndexOfTheNextGreaterValue - MedianIndex);
+			if (NumberOfNeededOperations <= MaximumNumberOfOperations)
+			{
+				MaximumNumberOfOperations -= NumberOfNeededOperations;
+				MedianValue = NextGreaterValue;
+			}
+			else
+			{
+				MedianValue += (MaximumNumberOfOperations / (IndexOfTheNextGreaterValue - MedianIndex));
+				IsMaximumMedianReached = true;
+			}
+		}
+		else
+		{
+			if (MedianValue == NextGreaterValue)
+			{
+				MedianValue += MaximumNumberOfOperations / (IndexOfTheNextGreaterValue - MedianIndex + 1);
+				IsMaximumMedianReached = true;
+			}
+		}
+	}
+	return MedianValue;
+} 
+
+void ProblemAnswer() 
+{
+	unsigned int NumberOfElements, MaximumNumberOfOperations, Temp;
+	vector<unsigned int> Elements; 
+	cin >> NumberOfElements >> MaximumNumberOfOperations; 
+	for (unsigned int i = 0; i < NumberOfElements; i++) 
+	{ 
+		cin >> Temp; 
+		Elements.push_back(Temp); 
+	} 
+	sort(Elements.begin(), Elements.end()); 
+	cout << GetMaximumMedianByUsingMaximumNumberOfOperations(Elements, MaximumNumberOfOperations) << '\n'; 
+} 
+int main()
+{
+	ProblemAnswer();
+}
