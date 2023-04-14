@@ -1,0 +1,42 @@
+#include<iostream>
+#include<vector>
+#include<algorithm> 
+#include <cmath> 
+using namespace std; 
+
+unsigned long long GetMinimumTotalSum(vector<unsigned long long> &Elements, unsigned long long &InflationCofficient)
+{
+	unsigned long long MinimumTotalSum, CurrentDenominator, RequiredDenominator;
+	CurrentDenominator = MinimumTotalSum = 0;
+	for (unsigned long long i = 1; i < Elements.size(); i++)
+	{
+		CurrentDenominator += Elements[i - 1];
+		RequiredDenominator = ceil(((double)Elements[i] * (double)100) / (double)InflationCofficient);
+		if (CurrentDenominator < RequiredDenominator)
+		{
+			MinimumTotalSum += (RequiredDenominator - CurrentDenominator);
+			CurrentDenominator = RequiredDenominator;
+		}
+	}
+	return MinimumTotalSum;
+}
+
+void ProblemAnswer() 
+{
+	unsigned long long NumberOfElements, InflationCofficient, Temp;
+	vector<unsigned long long> Elements; 
+	cin >> NumberOfElements >> InflationCofficient; 
+	for (unsigned int i = 0; i < NumberOfElements; i++) 
+	{ 
+		cin >> Temp; 
+		Elements.push_back(Temp); 
+	}
+	cout << GetMinimumTotalSum(Elements, InflationCofficient) << "\n";
+} 
+int main()
+{
+	unsigned int NumberOfTestCases;
+	cin >> NumberOfTestCases;
+	while (NumberOfTestCases--)
+		ProblemAnswer();
+}
