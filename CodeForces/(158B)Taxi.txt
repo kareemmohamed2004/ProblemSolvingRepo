@@ -1,0 +1,30 @@
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        ProblemAnswer();
+    }
+
+    private static void ProblemAnswer()
+    {
+        int NumberOfGroups, NumberOfNeededTaxis;
+        string [] Temp;
+        int[] Groups = { 0, 0, 0, 0, 0 };
+        NumberOfNeededTaxis = 0;
+        NumberOfGroups = Convert.ToInt32(Console.ReadLine());
+        Temp = Console.ReadLine().Split(' ');
+        for (int i = 0; i < NumberOfGroups; i++)
+            ++Groups[int.Parse(Temp[i])];
+        NumberOfNeededTaxis += (int)(Groups[4] + Groups[3] + (Groups[2]/2) + (Groups[2] % 2));
+        Groups[1] -= Groups[3];
+        if (0 < Groups[2] && Groups[2] % 2 != 0)
+            Groups[1] -= 2;
+        if (0 < Groups[1])
+        {
+            NumberOfNeededTaxis += Groups[1] / 4;
+            if (Groups[1] % 4 != 0)
+                ++NumberOfNeededTaxis;
+        }
+        Console.WriteLine(NumberOfNeededTaxis);
+    }
+}
