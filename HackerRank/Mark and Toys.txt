@@ -1,0 +1,38 @@
+using System;
+using System.Collections.Generic;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+
+        private static void ProblemAnswer()
+        {
+            int NumberOfToys, Budget, NumberOfToysToBePurchases;
+            NumberOfToysToBePurchases = 0;
+            var Temp = Console.ReadLine().Split(' ');
+            NumberOfToys = Convert.ToInt32(Temp[0]);
+            Budget = Convert.ToInt32(Temp[1]);
+            int [] Prices = new int[NumberOfToys];
+            Temp = Console.ReadLine().Split(' ');
+            for (int i = 0; i < Temp.Length; i++)
+                Prices[i] = Convert.ToInt32(Temp[i]);
+            Array.Sort(Prices);
+            for (int i = 0; i < Prices.Length; i++)
+            {
+                if (0 <= (Budget - Prices[i]))
+                {
+                    Budget -= Prices[i];
+                    ++NumberOfToysToBePurchases;
+                }
+                else
+                    break;
+            }
+            Console.WriteLine(NumberOfToysToBePurchases);
+        }
+    }
+}
