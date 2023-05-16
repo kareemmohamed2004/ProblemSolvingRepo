@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+
+        private static void ProblemAnswer()
+        {
+            int NumberOfRotations, TempNumberOfRotations, CountOfRotatedElements, CurrentInddexOfElementToBeRotated, NewInddexOfElementToBeRotated,ArraySize;
+            List<int> OriginalArray=new List<int>();
+            var Temp = Console.ReadLine().Split(' ');
+            ArraySize = Convert.ToInt32(Temp[0]);
+            NumberOfRotations = Convert.ToInt32(Temp[1]);
+            Temp = Console.ReadLine().Split(' ');
+            for (int i = 0; i < Temp.Length; i++)
+                OriginalArray.Add(Convert.ToInt32(Temp[i]));
+
+            int[] RotatedArray = new int[OriginalArray.Count];
+            CountOfRotatedElements = 0;
+            NumberOfRotations = NumberOfRotations % OriginalArray.Count;
+            while (CountOfRotatedElements < OriginalArray.Count)
+            {
+                TempNumberOfRotations = NumberOfRotations;
+                CurrentInddexOfElementToBeRotated = CountOfRotatedElements;
+                if ((CurrentInddexOfElementToBeRotated - TempNumberOfRotations) < 0)
+                {
+                    TempNumberOfRotations -= (CurrentInddexOfElementToBeRotated + 1);
+                    CurrentInddexOfElementToBeRotated = OriginalArray.Count - 1;
+                }
+                NewInddexOfElementToBeRotated = CurrentInddexOfElementToBeRotated - TempNumberOfRotations;
+                RotatedArray[NewInddexOfElementToBeRotated] = OriginalArray[CountOfRotatedElements];
+                ++CountOfRotatedElements;
+            }
+            for (int i = 0; i < RotatedArray.Length; i++)
+                Console.Write(RotatedArray[i] + " ");
+        }
+    }
+}
