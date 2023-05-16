@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+
+        private static void ProblemAnswer()
+        {
+            int NumberOfFlowers, NumberOfFriends,MinimumCostOfAllFlowers,FriendIndex;
+            MinimumCostOfAllFlowers = 0;
+            var Temp = Console.ReadLine().Split(' ');
+            NumberOfFlowers = Convert.ToInt32(Temp[0]);
+            NumberOfFriends = Convert.ToInt32(Temp[1]);
+            int[] FlowersPrices = new int[NumberOfFlowers];
+            int[] FriendsFlowers = new int[NumberOfFriends];
+            Temp = Console.ReadLine().Split(' ');
+            for (int i = 0; i < Temp.Length; i++)
+                FlowersPrices[i] = Convert.ToInt32(Temp[i]);
+            Array.Sort(FlowersPrices, new Comparison<int>((i1, i2) => i2.CompareTo(i1)));
+            for (int i = 0; i < FlowersPrices.Length; i++)
+            {
+                FriendIndex = i % NumberOfFriends;
+                MinimumCostOfAllFlowers += (FriendsFlowers[FriendIndex] + 1) * FlowersPrices[i];
+                FriendsFlowers[FriendIndex]++;
+            }
+            Console.WriteLine(MinimumCostOfAllFlowers);
+        }
+    }
+}
