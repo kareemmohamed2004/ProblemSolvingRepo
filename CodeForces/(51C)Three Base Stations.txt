@@ -1,0 +1,196 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string> 
+#include<algorithm> 
+#include<bitset> 
+#include<iomanip> 
+#include<map> 
+#include <set> 
+#include <unordered_map> 
+#include <cmath> 
+using namespace std; 
+
+unsigned long long GetBit(unsigned long long Mask, unsigned short Index) 
+{
+	return Mask & ((unsigned long long)1 << Index); 
+}
+unsigned long long SetBit(unsigned long long Mask, unsigned short Index) 
+{
+	return Mask | ((unsigned long long)1 << Index); 
+} 
+unsigned long long ClearBit(unsigned long long Mask, unsigned short Index) 
+{
+	return Mask & ~((unsigned long long)1 << Index); 
+} 
+unsigned long long ToggleBit(unsigned long long Mask, unsigned short Index) 
+{
+	return Mask ^ ((unsigned long long)1 << Index); 
+} 
+
+vector<double> GetMinimumDistanceAndStationsPositionsIfNumberOfHousesIsLessThanOrEqualThree(vector<unsigned long long>& HousesPositions)
+{
+	vector<double> MinimumDistanceAndStationsPositions;
+	MinimumDistanceAndStationsPositions.push_back(0);
+	for (auto itr = HousesPositions.begin(); itr != HousesPositions.end(); itr++)
+		MinimumDistanceAndStationsPositions.push_back((double)*itr);
+
+	if (MinimumDistanceAndStationsPositions.size() < 4)
+	{
+		unsigned short NumberOfRemainingStations = 4 - MinimumDistanceAndStationsPositions.size();
+		double StationLocation = MinimumDistanceAndStationsPositions[MinimumDistanceAndStationsPositions.size() - 1];
+		for (unsigned short i = 0; i < NumberOfRemainingStations; i++)
+			MinimumDistanceAndStationsPositions.push_back(StationLocation);
+		return MinimumDistanceAndStationsPositions;
+	}
+	return MinimumDistanceAndStationsPositions;
+}
+
+bool IsValidDistance(unsigned long long CurrentDistance, vector<unsigned long long>& HousesLocations)
+{
+	unsigned long long CurrentHouseLocation, LastHouseLocation, NumberOfStations, FurthestHouseLocation, IndexOfCurrentHouseLocation;
+	bool IsAllHousesCovered = false;
+	NumberOfStations = 0;
+	CurrentHouseLocation = HousesLocations[0];
+	IndexOfCurrentHouseLocation = 0;
+	FurthestHouseLocation = HousesLocations[HousesLocations.size() - 1];
+	while (!IsAllHousesCovered)
+	{
+		LastHouseLocation = CurrentHouseLocation + CurrentDistance;
+		if (FurthestHouseLocation <= LastHouseLocation)
+			IsAllHousesCovered = true;
+		else
+		{
+			for (unsigned long long i = (IndexOfCurrentHouseLocation + 1); i < HousesLocations.size(); i++)
+			{
+				if (LastHouseLocation < HousesLocations[i])
+				{
+					CurrentHouseLocation = HousesLocations[i];
+					IndexOfCurrentHouseLocation = i;
+					break;
+				}
+			}
+		}
+		++NumberOfStations;
+		if (NumberOfStations == 3)
+			return IsAllHousesCovered;
+	}
+	return IsAllHousesCovered;
+}
+
+double GetMinimumDistance(vector<unsigned long long>& HousesPositions)
+{
+	unsigned long long MinimumDistance, MaximumDistance, CurrentDistance, MinimumDistanceReached;
+	MinimumDistance = 0;
+	MaximumDistance = (unsigned long long)2 * 1000000000;
+	MinimumDistanceReached = MaximumDistance;
+	
+	while ((MinimumDistance + 1) < MaximumDistance)
+	{
+		CurrentDistance = (MinimumDistance + MaximumDistance) / 2;
+		if (IsValidDistance(CurrentDistance, HousesPositions))
+		{
+			MaximumDistance = CurrentDistance;
+			if (CurrentDistance < MinimumDistanceReached)
+				MinimumDistanceReached = CurrentDistance;
+		}
+		else
+			MinimumDistance = CurrentDistance + 1;
+	}
+
+	if (IsValidDistance(MinimumDistance, HousesPositions))
+		if (MinimumDistance < MinimumDistanceReached)
+			MinimumDistanceReached = MinimumDistance;
+
+	if (IsValidDistance(MaximumDistance, HousesPositions))
+		if (MaximumDistance < MinimumDistanceReached)
+			MinimumDistanceReached = MaximumDistance;
+
+	return MinimumDistanceReached;
+}
+
+vector<double> GetDistanceAndStationsPositions(double Distance, vector<unsigned long long>& HousesLocations)
+{
+	vector<double> MinimumDistanceAndStationsPositions;
+	unsigned long long CurrentHouseLocation = HousesLocations[0], LastHouseLocation, FurthestHouseLocation, IndexOfCurrentHouseLocation;
+	double StationLocation;
+	double DistanceOfStation = Distance / 2;
+	IndexOfCurrentHouseLocation = 0;
+	FurthestHouseLocation = HousesLocations[HousesLocations.size() - 1];
+	unsigned short NumberOfStations = 0;
+	bool IsAllHousesCovered = false;
+	MinimumDistanceAndStationsPositions.push_back(DistanceOfStation);
+	MinimumDistanceAndStationsPositions.push_back(CurrentHouseLocation + DistanceOfStation);
+	double Index = 0;
+	while (HousesLocations[Index] <= (CurrentHouseLocation + Distance) && Index < HousesLocations.size())
+		++Index;
+	if (Index == HousesLocations.size())
+	{
+		MinimumDistanceAndStationsPositions.push_back(HousesLocations[Index - 1]);
+		MinimumDistanceAndStationsPositions.push_back(HousesLocations[Index - 1]);
+	}
+	else
+	{
+		LastHouseLocation = HousesLocations[Index] + Distance;
+		MinimumDistanceAndStationsPositions.push_back(HousesLocations[Index] + DistanceOfStation);
+		auto Itr = lower_bound(HousesLocations.begin(), HousesLocations.end(), LastHouseLocation);
+		if (Itr == HousesLocations.end())
+			MinimumDistanceAndStationsPositions.push_back(FurthestHouseLocation);
+		else
+		{
+			if (*Itr == LastHouseLocation)
+			{
+				Itr = lower_bound(HousesLocations.begin(), HousesLocations.end(), LastHouseLocation + 1);
+				if (Itr == HousesLocations.end())
+					MinimumDistanceAndStationsPositions.push_back(FurthestHouseLocation);
+				else
+					MinimumDistanceAndStationsPositions.push_back((*Itr) + DistanceOfStation);
+			}
+			else
+				MinimumDistanceAndStationsPositions.push_back((*Itr) + DistanceOfStation);
+		}
+	}
+	return MinimumDistanceAndStationsPositions;
+}
+
+vector<double> GetMinimumDistanceAndStationsPositionsIfNumberOfHousesIsMoreThanThree(vector<unsigned long long>& HousesPositions)
+{
+	vector<double> MinimumDistanceAndStationsPositions;
+	double MinimumDistance;
+	MinimumDistance = GetMinimumDistance(HousesPositions);
+	MinimumDistanceAndStationsPositions = GetDistanceAndStationsPositions(MinimumDistance, HousesPositions);
+	return MinimumDistanceAndStationsPositions;
+}
+
+vector<double> GetMinimumDistanceAndStationsPositions(vector<unsigned long long> &HousesPositions)
+{
+	if (HousesPositions.size() <= 3)
+		return GetMinimumDistanceAndStationsPositionsIfNumberOfHousesIsLessThanOrEqualThree(HousesPositions);
+	else
+		return GetMinimumDistanceAndStationsPositionsIfNumberOfHousesIsMoreThanThree(HousesPositions);
+}
+
+void ProblemAnswer() 
+{
+	unsigned long long NumberOfHouses,Temp;
+	vector<unsigned long long> HousesPositions; 
+	vector<double> MinimumDistanceAndStationsPositions;
+	cin >> NumberOfHouses; 
+	for (unsigned int i = 0; i < NumberOfHouses; i++) 
+	{ 
+		cin >> Temp; 
+		HousesPositions.push_back(Temp); 
+	}
+	sort(HousesPositions.begin(), HousesPositions.end());
+	MinimumDistanceAndStationsPositions = GetMinimumDistanceAndStationsPositions(HousesPositions);
+	cout << fixed;
+	cout << setprecision(6);
+	cout << MinimumDistanceAndStationsPositions[0] << "\n";
+	for (unsigned short i = 1; i < MinimumDistanceAndStationsPositions.size(); i++)
+		cout << MinimumDistanceAndStationsPositions[i] << ' ';
+} 
+int main()
+{
+	ProblemAnswer();
+}
