@@ -1,0 +1,54 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            UInt64 NumberOfTestCases, Number, CountOfPrimeNumbers;
+            List<UInt64> TestCases = new List<UInt64>();
+            var Temp = Console.ReadLine()?.Split(' ');
+            Number = Convert.ToUInt64(Temp?[0]);
+            NumberOfTestCases = Convert.ToUInt64(Temp?[1]);
+            for (UInt64 i = 0; (UInt64)i < NumberOfTestCases; i++)
+                TestCases.Add(Convert.ToUInt64(Console.ReadLine()));
+            BitArray IsPrimeNumber = GetPrimeNumbers(Number, out CountOfPrimeNumbers);
+            Console.WriteLine(CountOfPrimeNumbers);
+            for (UInt64 i = 0; i < (UInt64)TestCases.Count; i++)
+                Console.WriteLine(IsPrimeNumber[(int)TestCases[(int)i]] ? 1 : 0);
+        }
+
+        private static BitArray GetPrimeNumbers(UInt64 Number, out UInt64 CountOfPrimeNumbers)
+        {
+            BitArray IsPrimeNumber = new((int)(Number + 1));
+            IsPrimeNumber.SetAll(true);
+            IsPrimeNumber.Set(0,false);
+            IsPrimeNumber.Set(1,false);
+            CountOfPrimeNumbers = 0;
+            UInt64 i;
+            for (i = 2; (i * i) <= Number; i++)
+            {
+                if (IsPrimeNumber[(int)i])
+                {
+                    ++CountOfPrimeNumbers;
+                    for (UInt64 j = (i * i); j <= Number; j += i)
+                        IsPrimeNumber[(int)j] = false;
+                }
+            }
+            for (; i <= Number; i++)
+                if (IsPrimeNumber[(int)i])
+                    ++CountOfPrimeNumbers;
+
+            return IsPrimeNumber;
+        }
+
+    }
+}
