@@ -1,0 +1,101 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+#include<iomanip>
+#include<map>
+#include <set>
+using namespace std;
+
+unsigned long long GetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ((unsigned long long)1 << Index);
+}
+
+unsigned long long SetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask | ((unsigned long long)1 << Index);
+}
+
+unsigned long long ClearBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ~((unsigned long long)1 << Index);
+}
+
+unsigned long long ToggleBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask ^ ((unsigned long long)1 << Index);
+}
+
+void GenerateLuckyNumbersWithSpecifiedNumberOfDigits(unsigned short NumberOfDigits, unsigned long long Base, unsigned long long LuckyNumber, set<unsigned long long>& LuckyNumbers)
+{
+    if (NumberOfDigits)
+    {
+        GenerateLuckyNumbersWithSpecifiedNumberOfDigits(NumberOfDigits - 1, Base * 10, (Base * 4) + LuckyNumber, LuckyNumbers);
+        GenerateLuckyNumbersWithSpecifiedNumberOfDigits(NumberOfDigits - 1, Base * 10, (Base * 7) + LuckyNumber, LuckyNumbers);
+    }
+    else
+        LuckyNumbers.insert(LuckyNumber);
+}
+
+int main()
+{
+    unsigned long long Left, Right, SumOfLuckyNumbersFromLeftToRight, MaximumLuckyNumber, Temp;
+    set<unsigned long long> LuckyNumbers;
+    bool CommitCalculation = false;
+    MaximumLuckyNumber = 4444444444;
+    SumOfLuckyNumbersFromLeftToRight = 0;
+    cin >> Left >> Right;
+    for (unsigned short i = 1; i < 10; i++)
+        GenerateLuckyNumbersWithSpecifiedNumberOfDigits(i, 1, 0, LuckyNumbers);
+    LuckyNumbers.insert(MaximumLuckyNumber);
+    Temp = 0;
+
+    auto Itr = LuckyNumbers.begin();
+    while ((Itr != LuckyNumbers.end()) && (*Itr < Left))
+        ++Itr;
+
+    if (*Itr == Left)
+    {
+        SumOfLuckyNumbersFromLeftToRight += Left;
+        if (Left == Right)
+            CommitCalculation = true;
+    }
+    else if (Left < *Itr)
+    {
+        if (Right < *Itr)
+        {
+            SumOfLuckyNumbersFromLeftToRight += ((Right - Left) + 1) * (*Itr);
+            CommitCalculation = true;
+        }
+        else
+        {
+            SumOfLuckyNumbersFromLeftToRight += (((*Itr) - Left) + 1) * (*Itr);
+            if (Right == *Itr)
+                CommitCalculation = true;
+        }
+    }
+
+    while (!CommitCalculation)
+    {
+        ++Itr;
+        if (*Itr <= Right)
+        {
+            SumOfLuckyNumbersFromLeftToRight += ((*Itr) - *(prev(Itr, 1))) * (*Itr);
+            if (*Itr == Right)
+                CommitCalculation = true;
+        }
+        else
+        {
+            SumOfLuckyNumbersFromLeftToRight += (Right - *(prev(Itr, 1))) * (*Itr);
+            CommitCalculation = true;
+        }
+    }
+
+    cout << SumOfLuckyNumbersFromLeftToRight << "\n";
+
+    return 0;
+}

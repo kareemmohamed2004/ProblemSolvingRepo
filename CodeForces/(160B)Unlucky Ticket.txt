@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            string Temp, FirstHalf, SecondHalf;
+            char[] FirstHalfCharacters;
+            char[] SecondHalfCharacters;
+            Temp = Console.ReadLine();
+            Temp = Console.ReadLine();
+            FirstHalf = Temp.Substring(0, Temp.Length / 2);
+            SecondHalf = Temp[(Temp.Length / 2)..];
+            FirstHalfCharacters = FirstHalf.ToCharArray();
+            SecondHalfCharacters = SecondHalf.ToCharArray();
+            Array.Sort(FirstHalfCharacters);
+            Array.Sort(SecondHalfCharacters);
+            FirstHalf = new string(FirstHalfCharacters);
+            SecondHalf = new string(SecondHalfCharacters);
+            List<string> TicketHalfs = new List<string>();
+            TicketHalfs.Add(FirstHalf);
+            TicketHalfs.Add(SecondHalf);
+            TicketHalfs.Sort();
+            int i;
+            for (i = 0; i < FirstHalf.Length; i++)
+            {
+                if (TicketHalfs[1][i] <= TicketHalfs[0][i])
+                    break;
+            }
+            if (i == FirstHalf.Length)
+                Console.WriteLine("YES");
+            else
+                Console.WriteLine("NO");
+        }
+    }
+}

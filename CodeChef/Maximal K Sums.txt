@@ -1,0 +1,131 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+#include<iomanip>
+#include<map>
+#include<set>
+#include<unordered_map>
+#include<cmath>
+
+using namespace std;
+
+unsigned long long GetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ((unsigned long long)1 << Index);
+}
+unsigned long long SetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask | ((unsigned long long)1 << Index);
+}
+unsigned long long ClearBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ~((unsigned long long)1 << Index);
+}
+unsigned long long ToggleBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask ^ ((unsigned long long)1 << Index);
+}
+
+priority_queue<pair<unsigned long long, pair<unsigned int, unsigned int>>> GetMaximalSums(vector<unsigned long long>& PrefixSums, unsigned int CountOfMaximalSums)
+{
+    unsigned long long LeftSubArraySum, RightSubArraySum, CurrentSum;
+    int LeftIndex, LastIndex, RightIndex, TempRightIndex, TempLeftIndex;
+    bool IsMaximalSumsFound, IsleftIndexIncreased, IsRightIndexDecreased;
+    priority_queue<pair<unsigned long long, pair<unsigned int, unsigned int>>>  MaximalSums;
+    priority_queue<pair<unsigned long long, pair<unsigned int, unsigned int>>> Result;
+    map<pair<unsigned int, unsigned int>, bool> CurrentSubArraysIntervals;
+    LastIndex = PrefixSums.size() - 1;
+    RightIndex = LastIndex;
+    LeftIndex = 0;
+    IsMaximalSumsFound = IsleftIndexIncreased = IsRightIndexDecreased = false;
+    MaximalSums.push(make_pair(PrefixSums[RightIndex], make_pair(LeftIndex, RightIndex)));
+    if (CountOfMaximalSums == 1)
+    {
+        IsMaximalSumsFound = true;
+        Result.push(make_pair(MaximalSums.top().first, make_pair(MaximalSums.top().second.first, MaximalSums.top().second.second)));
+    }
+
+    while (!IsMaximalSumsFound)
+    {
+        CurrentSum = MaximalSums.top().first;
+        LeftIndex = MaximalSums.top().second.first;
+        RightIndex = MaximalSums.top().second.second;
+        MaximalSums.pop();
+
+        if (CurrentSubArraysIntervals[{LeftIndex, RightIndex}])
+            continue;
+
+        CurrentSubArraysIntervals[{LeftIndex, RightIndex}] = true;
+
+        TempLeftIndex = LeftIndex;
+        TempRightIndex = RightIndex;
+
+        if (TempLeftIndex < LastIndex)
+        {
+            ++TempLeftIndex;
+            IsleftIndexIncreased = true;
+        }
+
+        if (0 < TempLeftIndex)
+            RightSubArraySum = PrefixSums[TempRightIndex] - PrefixSums[(unsigned long long)TempLeftIndex - 1];
+        else
+            RightSubArraySum = PrefixSums[TempRightIndex];
+
+        MaximalSums.push(make_pair(RightSubArraySum, make_pair(TempLeftIndex, TempRightIndex)));
+
+        if (IsleftIndexIncreased)
+            --TempLeftIndex;
+
+        if (0 < TempRightIndex)
+        {
+            --TempRightIndex;
+            IsRightIndexDecreased = true;
+        }
+
+        if (0 < TempLeftIndex)
+            LeftSubArraySum = PrefixSums[TempRightIndex] - PrefixSums[(unsigned long long)TempLeftIndex - 1];
+        else
+            LeftSubArraySum = PrefixSums[TempRightIndex];
+
+        MaximalSums.push(make_pair(LeftSubArraySum, make_pair(TempLeftIndex, TempRightIndex)));
+
+        if (IsRightIndexDecreased)
+            ++TempRightIndex;
+
+        Result.push(make_pair(CurrentSum, make_pair(LeftIndex, RightIndex)));
+        --CountOfMaximalSums;
+        if (CountOfMaximalSums == 0)
+            IsMaximalSumsFound = true;
+        IsleftIndexIncreased = IsRightIndexDecreased = false;
+    }
+    return Result;
+}
+void ProblemAnswer()
+{
+    unsigned int ArraySize, CountOfMaximalSums, Temp;
+    vector<unsigned long long> PrefixSums;
+    priority_queue<pair<unsigned long long, pair<unsigned int, unsigned int>>>  MaximalSums;
+    cin >> ArraySize >> CountOfMaximalSums;
+    for (unsigned int i = 0; i < ArraySize; i++)
+    {
+        cin >> Temp;
+        if (0 < i)
+            PrefixSums.push_back(PrefixSums[(unsigned long long)i - 1] + Temp);
+        else
+            PrefixSums.push_back(Temp);
+    }
+    MaximalSums = GetMaximalSums(PrefixSums, CountOfMaximalSums);
+    for (unsigned int i = 0; i < CountOfMaximalSums; i++)
+    {
+        cout << MaximalSums.top().first << " ";
+        MaximalSums.pop();
+    }
+}
+int main()
+{
+    ProblemAnswer();
+}

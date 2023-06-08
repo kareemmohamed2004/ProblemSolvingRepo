@@ -1,0 +1,46 @@
+using System;
+using System.Collections.Generic;
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            UInt64 SmallerNumber, BiggerNumber, Result;
+            string[] Temp = Console.ReadLine().Split(' ');
+            SmallerNumber = Convert.ToUInt64(Temp[0]);
+            BiggerNumber = Convert.ToUInt64(Temp[1]);
+            Result = 0;
+            if (SmallerNumber == BiggerNumber)
+                Console.WriteLine(Result);
+            else if (BiggerNumber < SmallerNumber)
+                Console.WriteLine(-1);
+            else
+            {
+                GetNumberOfStepsFromSmallerNumberToBiggerNumber(SmallerNumber, BiggerNumber, ref Result, (UInt64)0);
+                if (0 < Result)
+                    Console.WriteLine(Result);
+                else
+                    Console.WriteLine(-1);
+            }
+        }
+
+        private static void GetNumberOfStepsFromSmallerNumberToBiggerNumber(UInt64 SmallerNumber, UInt64 BiggerNumber, ref UInt64 Result, UInt64 NumberOfSteps)
+        {
+            if (SmallerNumber == BiggerNumber)
+                Result = NumberOfSteps;
+            else
+            {
+                if (SmallerNumber < BiggerNumber)
+                {
+                    GetNumberOfStepsFromSmallerNumberToBiggerNumber((UInt64)SmallerNumber * 2, BiggerNumber, ref Result, NumberOfSteps + 1);
+                    GetNumberOfStepsFromSmallerNumberToBiggerNumber((UInt64)SmallerNumber * 3, BiggerNumber, ref Result, NumberOfSteps + 1);
+                }
+            }
+        }
+    }
+}

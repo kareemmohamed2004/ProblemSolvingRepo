@@ -1,0 +1,27 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+#include<iomanip>
+#include<map>
+#include<set>
+using namespace std;
+
+int main()
+{
+    unsigned long long Number, NumberOfQueries, Temp;
+    vector<unsigned long long> Queries;
+    cin >> NumberOfQueries;
+    for (unsigned long long i = 0; i < NumberOfQueries; i++)
+    {
+        cin >> Temp;
+        Queries.push_back(Temp);
+    }
+    for (unsigned short i = 0; i < Queries.size(); i++)
+        cout << Queries[i] / 2 << "\n";
+
+    return 0;
+}

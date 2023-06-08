@@ -1,0 +1,70 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            UInt64 NumberOfTestCases, Number;
+            List<UInt64> TestCaseAnswer;
+            TestCaseAnswer = new List<UInt64>();
+            NumberOfTestCases = Convert.ToUInt64(Console.ReadLine());
+            List<UInt64> PrimeNumbers = GetPrimeNumbersLessThanSpecifiedNumber(1000000);
+            List<UInt64> PrimeNumbersPrefixSum = GetPrimeNumbersPrefixSum(PrimeNumbers);
+            for (UInt64 i = 0; i < NumberOfTestCases; i++)
+            {
+                Number = Convert.ToUInt64(Console.ReadLine());
+                TestCaseAnswer.Add(PrimeNumbersPrefixSum[(int)Number]);
+            }
+            for (int i = 0; i < TestCaseAnswer.Count; i++)
+                Console.WriteLine(TestCaseAnswer[i]);
+        }
+
+        private static bool IsPrime(UInt64 Number)
+        {
+            for (UInt64 i = 2; (i * i) <= Number; i++)
+            {
+                if (Number % i == 0)
+                    return false;
+            }
+            return true;
+        }
+
+        private static List<UInt64> GetPrimeNumbersPrefixSum(List<UInt64> PrimeNumbers)
+        {
+            List<UInt64> PrimeNumbersPrefix = new();
+            PrimeNumbersPrefix.Add(0);
+            int CurrentPrimeNumberIndex = 0;
+            for (UInt64 i = 1; i <= 1000000; i++)
+            {
+                PrimeNumbersPrefix.Add(PrimeNumbersPrefix[^1]);
+                while (CurrentPrimeNumberIndex < PrimeNumbers.Count && PrimeNumbers[CurrentPrimeNumberIndex] <= i)
+                {
+                    PrimeNumbersPrefix[(int)i] += PrimeNumbers[CurrentPrimeNumberIndex];
+                    ++CurrentPrimeNumberIndex;
+                }
+            }
+            return PrimeNumbersPrefix;
+        }
+
+        private static List<UInt64> GetPrimeNumbersLessThanSpecifiedNumber(UInt64 Number)
+        {
+            List<UInt64> Result = new List<UInt64>();
+            UInt64 CurrentNumber = 2;
+            while (CurrentNumber <= Number)
+            {
+                if (IsPrime(CurrentNumber))
+                    Result.Add(CurrentNumber);
+                ++CurrentNumber;
+            }
+            return Result;
+        }
+    }
+}

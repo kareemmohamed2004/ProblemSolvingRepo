@@ -1,0 +1,51 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+#include<iomanip>
+#include<map>
+#include<set>
+using namespace std;
+
+bool IsDivisible(unsigned short Start, unsigned short End, unsigned long long Number)
+{
+    for (unsigned short i = Start; i <= End; i++)
+    {
+        if (Number % i)
+            return false;
+    }
+    return true;
+}
+
+unsigned long long GetLCM(unsigned short Number)
+{
+    if (Number < 3)
+        return Number;
+
+    unsigned long long Start, End, Multiple;
+    Start = (Number / 2) + 1;;
+    End = Number - 1;
+    Multiple = 2;
+    while (!IsDivisible(Start, End, Number * Multiple))
+        ++Multiple;
+    return Number * Multiple;
+}
+
+int main()
+{
+    unsigned long long Number, NumberOfQueries, Temp;
+    vector<unsigned long long> Queries;
+    cin >> NumberOfQueries;
+    for (unsigned long long i = 0; i < NumberOfQueries; i++)
+    {
+        cin >> Temp;
+        Queries.push_back(Temp);
+    }
+    for (unsigned short i = 0; i < Queries.size(); i++)
+        cout << GetLCM(Queries[i]) << "\n";
+
+    return 0;
+}
