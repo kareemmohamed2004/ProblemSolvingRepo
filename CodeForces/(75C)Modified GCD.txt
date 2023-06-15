@@ -1,0 +1,72 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+#include<iomanip>
+#include<map>
+#include<set>
+#include<numeric>
+using namespace std;
+
+unsigned long long GCD(unsigned long long a, unsigned long long b) 
+{
+    if (b == 0)
+        return a;
+    return GCD(b, a % b);
+}
+
+vector<unsigned long long> GetFactors(unsigned long long Number)
+{
+    vector<unsigned long long> Factors;
+    Factors.push_back(1);
+    for (unsigned long long i = 2; (i * i) <= Number; i++)
+    {
+        if (!(Number % i))
+        {
+            Factors.push_back(i);
+            if ((Number / i) != i)
+                Factors.push_back(Number / i);
+        }
+    }
+    Factors.push_back(Number);
+    return Factors;
+}
+
+long long GetGCDInGivenRange(unsigned long long Left, unsigned long long Right, vector<unsigned long long> Factors)
+{
+    long long Result = -1;
+    for (unsigned long long i = static_cast<unsigned long long>(Factors.size()) - 1; i >= 0; i--)
+    {
+        if ((Left <= Factors[i]) && (Factors[i] <= Right))
+        {
+            Result = Factors[i];
+            return Result;
+        }
+        if (Factors[i] < Left)
+            return Result;
+    }
+    return Result;
+}
+
+int main()
+{
+    unsigned long long a, b, Left, Right, NumberOfQueries;
+    vector <pair<unsigned long long, unsigned long long> >Queries;
+    vector<unsigned long long> Factors;
+    cin >> a >> b;
+    cin >> NumberOfQueries;
+    for (unsigned long long i = 0; i < NumberOfQueries; i++)
+    {
+        cin >> Left >> Right;
+        Queries.push_back(make_pair(Left, Right));
+    }
+    Factors = GetFactors(GCD(a, b));
+    sort(Factors.begin(), Factors.end());
+    for (unsigned short i = 0; i < Queries.size(); i++)
+        cout << GetGCDInGivenRange(Queries[i].first, Queries[i].second, Factors) << "\n";
+
+    return 0;
+}
