@@ -1,0 +1,58 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            List<UInt64> Numbers = new();
+            UInt64 Number;
+            Number = Convert.ToUInt64(Console.ReadLine());
+            while (Number!=0)
+            {
+                Numbers.Add(Number);
+                Number = Convert.ToUInt64(Console.ReadLine());
+            }
+            foreach (var Num in Numbers)
+                Console.WriteLine(GetProductOfPrimeFactors(Num));
+        }
+
+        private static string GetProductOfPrimeFactors(UInt64 Number)
+        {
+            StringBuilder ProductOfPrimeFactors = new();
+            Dictionary<UInt64, UInt64> PrimeFactors = new();
+            for (UInt64 i = 2; (i * i) <= Number; i++)
+            {
+                while (Number % i == 0)
+                {
+                    if (PrimeFactors.TryGetValue(i, out _))
+                        ++PrimeFactors[i];
+                    else
+                        PrimeFactors.Add(i, 1);
+                    
+                    Number /= i;
+                }
+            }
+            if (1 < Number)
+            {
+                if (PrimeFactors.TryGetValue(Number, out _))
+                    ++PrimeFactors[Number];
+                else
+                    PrimeFactors.Add(Number, 1);
+            }
+            foreach (var KeyValuePair in PrimeFactors)
+                ProductOfPrimeFactors.Append($"{KeyValuePair.Key}^{KeyValuePair.Value} ");
+
+            return ProductOfPrimeFactors.ToString();
+        }
+    }
+}

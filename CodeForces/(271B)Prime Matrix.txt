@@ -1,0 +1,86 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+#include<iomanip>
+#include<map>
+#include<set>
+#include<numeric>
+using namespace std;
+
+vector<unsigned long> GetPrimeNumbers(unsigned int Number)
+{
+    bitset<1000001> IsPrimeNumber;
+    vector<unsigned long> PrimeNUmbers;
+    IsPrimeNumber.set();
+    IsPrimeNumber.set(0, false);
+    IsPrimeNumber.set(1, false);
+    unsigned int i;
+    for (i = 2; (i * i) <= Number; i++)
+    {
+        if (IsPrimeNumber[i])
+        {
+            PrimeNUmbers.push_back(i);
+            for (unsigned int j = (i * i); j <= Number; j += i)
+                IsPrimeNumber[j] = false;
+        }
+    }
+    for (; i <= Number; i++)
+        if (IsPrimeNumber[i])
+            PrimeNUmbers.push_back(i);
+
+    return PrimeNUmbers;
+}
+
+unsigned long GetMinimumChanges(vector<vector<unsigned int>>& Matrix, vector<unsigned long>& PrimeNumbers)
+{
+    unsigned long MinimumChanges = 4294967295, CurrentCounter,NumberOfColumns;
+    NumberOfColumns = Matrix[0].size();
+    for (unsigned short i = 0; i < Matrix.size(); i++)
+    {
+        CurrentCounter = 0;
+        for (unsigned short j = 0; j < Matrix[i].size(); j++)
+        {
+            auto Itr = lower_bound(PrimeNumbers.begin(), PrimeNumbers.end(), Matrix[i][j]);
+            CurrentCounter += ((*Itr) - Matrix[i][j]);
+        }
+        if (CurrentCounter < MinimumChanges)
+            MinimumChanges = CurrentCounter;
+    }
+    for (unsigned short Column = 0; Column < NumberOfColumns; Column++)
+    {
+        CurrentCounter = 0;
+        for (unsigned short Row = 0; Row < Matrix.size(); Row++)
+        {
+            auto Itr = lower_bound(PrimeNumbers.begin(), PrimeNumbers.end(), Matrix[Row][Column]);
+            CurrentCounter += ((*Itr) - Matrix[Row][Column]);
+        }
+        if (CurrentCounter < MinimumChanges)
+            MinimumChanges = CurrentCounter;
+    }
+    return MinimumChanges;
+}
+
+int main()
+{
+    unsigned short NumberOfRows, NumberOfColumns;
+    unsigned int Number;
+    vector<vector<unsigned int>> Matrix;
+    vector<unsigned long> PrimeNumbers = GetPrimeNumbers(1000000);
+    cin >> NumberOfRows >> NumberOfColumns;
+    for (unsigned short i = 0; i < NumberOfRows; i++)
+    {
+        vector<unsigned int> NewRow;
+        Matrix.push_back(NewRow);
+        for (unsigned short j = 0; j < NumberOfColumns; j++)
+        {
+            cin >> Number;
+            Matrix[i].push_back(Number);
+        }
+    }
+    cout << GetMinimumChanges(Matrix, PrimeNumbers) << "\n";
+    return 0;
+}

@@ -1,0 +1,70 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            int NumberOfElements;
+            NumberOfElements = Convert.ToInt32(Console.ReadLine());
+            List<UInt64> Numbers = new();
+            string[] Temp = Console.ReadLine().Split(' ');
+            foreach (string TempStr in Temp)
+                Numbers.Add(Convert.ToUInt64(TempStr));
+
+            var Result = IsTPrime(Numbers);
+            for (int i = 0; i < Result.Count; i++)
+            {
+                if (Result[i])
+                    Console.WriteLine("YES");
+                else
+                    Console.WriteLine("NO");
+            }
+        }
+
+        private static BitArray GetPrimeNumbers()
+        {
+            BitArray IsPrimeNumber = new(1000001);
+            IsPrimeNumber.SetAll(true);
+            IsPrimeNumber.Set(0, false);
+            IsPrimeNumber.Set(1, false);
+            for (UInt64 i = 2; (i * i) <= 1000000; i++)
+            {
+                if (IsPrimeNumber[(int)i])
+                    for (UInt64 j = (i * i); j <= 1000000; j += i)
+                        IsPrimeNumber[(int)j] = false;
+            }
+            return IsPrimeNumber;
+        }
+
+        private static List<bool> IsTPrime(List<UInt64> Numbers)
+        {
+            List<bool> Result = new();
+            BitArray IsPrimeNumbers = GetPrimeNumbers();
+            foreach (var Number in Numbers)
+            {
+                if (Number < 4)
+                    Result.Add(false);
+                else
+                {
+                    double SquareRoot = Math.Sqrt(Number);
+                    bool IsPerfectSquare = SquareRoot % 1 == 0;
+                    if (IsPerfectSquare && IsPrimeNumbers.Get((int)SquareRoot))
+                        Result.Add(true);
+                    else
+                        Result.Add(false);
+                }
+            }
+            return Result;
+        }
+    }
+}

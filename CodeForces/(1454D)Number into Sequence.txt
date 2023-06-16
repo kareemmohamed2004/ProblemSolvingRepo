@@ -1,0 +1,103 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            UInt64 NumberOfTestCases, Number, TheMaximalPossibleLength;
+            NumberOfTestCases = Convert.ToUInt64(Console.ReadLine());
+            for (UInt64 i = 0; i < NumberOfTestCases; i++)
+            {
+                Number = Convert.ToUInt64(Console.ReadLine());
+                GetProductOfPrimeFactors(Number);
+            }
+        }
+
+        private static List<UInt16> GetPrimeNumbers(UInt16 Number, out BitArray IsPrimeNumber)
+        {
+            IsPrimeNumber = new((int)(Number + 1));
+            List<UInt16> PrimeNUmbers = new();
+            IsPrimeNumber.SetAll(true);
+            IsPrimeNumber.Set(0, false);
+            IsPrimeNumber.Set(1, false);
+            UInt16 i;
+            for (i = 2; (i * i) <= Number; i++)
+            {
+                if (IsPrimeNumber[(int)i])
+                {
+                    PrimeNUmbers.Add(i);
+                    for (UInt16 j = (UInt16)(i * i); j <= Number; j += i)
+                        IsPrimeNumber[(int)j] = false;
+                }
+            }
+            for (; i <= Number; i++)
+                if (IsPrimeNumber[(int)i])
+                    PrimeNUmbers.Add(i);
+
+            return PrimeNUmbers;
+        }
+
+        private static void GetProductOfPrimeFactors(UInt64 Number)
+        {
+            StringBuilder ProductOfPrimeFactors = new();
+            Dictionary<UInt64, UInt64> PrimeFactors = new();
+            UInt64 TheMostRepeatedPrimeFactor, MaximumPrimeFactorRepeatitions, Product;
+            MaximumPrimeFactorRepeatitions = 0;
+            TheMostRepeatedPrimeFactor = 0;
+            Product = 1;
+            for (UInt64 i = 2; (i * i) <= Number; i++)
+            {
+                while (Number % i == 0)
+                {
+                    if (PrimeFactors.TryGetValue(i, out _))
+                        ++PrimeFactors[i];
+                    else
+                        PrimeFactors.Add(i, 1);
+
+                    if (MaximumPrimeFactorRepeatitions < PrimeFactors[i])
+                    {
+                        MaximumPrimeFactorRepeatitions=PrimeFactors[i];
+                        TheMostRepeatedPrimeFactor = i;
+                    }
+                    Number /= i;
+                }
+            }
+            if (1 < Number)
+            {
+                if (PrimeFactors.TryGetValue(Number, out _))
+                    ++PrimeFactors[Number];
+                else
+                    PrimeFactors.Add(Number, 1);
+
+                if (MaximumPrimeFactorRepeatitions < PrimeFactors[Number])
+                {
+                    MaximumPrimeFactorRepeatitions = PrimeFactors[Number];
+                    TheMostRepeatedPrimeFactor = Number;
+                }
+            }
+
+            Console.WriteLine(MaximumPrimeFactorRepeatitions);
+            for (UInt64 i = 0; i < MaximumPrimeFactorRepeatitions - 1; i++)
+                ProductOfPrimeFactors.Append($"{TheMostRepeatedPrimeFactor} ");
+            foreach (var item in PrimeFactors)
+            {
+                if (item.Key != TheMostRepeatedPrimeFactor)
+                    Product *= (ulong)Math.Pow(item.Key, item.Value);
+                else
+                    Product *= TheMostRepeatedPrimeFactor;
+            }
+            ProductOfPrimeFactors.Append(Product);
+            Console.WriteLine(ProductOfPrimeFactors.ToString());
+        }
+    }
+}

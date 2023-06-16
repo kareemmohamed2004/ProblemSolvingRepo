@@ -1,0 +1,72 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            string[] Inputs = Console.ReadLine().Split(' ');
+            UInt16 Number, K;
+            Number = Convert.ToUInt16(Inputs[0]);
+            K = Convert.ToUInt16(Inputs[1]);
+            if(IsNoldbachNumber(Number,K))
+                Console.WriteLine("YES");
+            else
+                Console.WriteLine("NO");
+        }
+
+        private static List<UInt16> GetPrimeNumbers(UInt16 Number, out BitArray IsPrimeNumber)
+        {
+            IsPrimeNumber = new((int)(Number + 1));
+            List<UInt16> PrimeNUmbers = new();
+            IsPrimeNumber.SetAll(true);
+            IsPrimeNumber.Set(0, false);
+            IsPrimeNumber.Set(1, false);
+            UInt16 i;
+            for (i = 2; (i * i) <= Number; i++)
+            {
+                if (IsPrimeNumber[(int)i])
+                {
+                    PrimeNUmbers.Add(i);
+                    for (UInt16 j = (UInt16)(i * i); j <= Number; j += i)
+                        IsPrimeNumber[(int)j] = false;
+                }
+            }
+            for (; i <= Number; i++)
+                if (IsPrimeNumber[(int)i])
+                    PrimeNUmbers.Add(i);
+
+            return PrimeNUmbers;
+        }
+
+        private static bool IsNoldbachNumber(UInt16 Number, UInt16 K)
+        {
+            UInt16 Counter = 0;
+            if (Number < 6)
+                return K <= Counter;
+
+            UInt32 CurrentNoldbachNumber;
+            BitArray IsPrimeNumber;
+            List<ushort> PrimeNumbers = GetPrimeNumbers(Number, out IsPrimeNumber);
+            int i = 0;
+            CurrentNoldbachNumber = (UInt32)(PrimeNumbers[i] + PrimeNumbers[i + 1] + 1);
+            while (CurrentNoldbachNumber <= Number)
+            {
+                if (IsPrimeNumber.Get((int)CurrentNoldbachNumber))
+                    ++Counter;
+                ++i;
+                CurrentNoldbachNumber = (UInt32)(PrimeNumbers[i] + PrimeNumbers[i + 1] + 1);
+            }
+            return K <= Counter;
+        }
+    }
+}

@@ -1,0 +1,71 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            UInt64 NumberOfTestCases, Number;
+            NumberOfTestCases = Convert.ToUInt64(Console.ReadLine());
+            for (UInt64 i = 0; i < NumberOfTestCases; i++)
+            {
+                Number = Convert.ToUInt64(Console.ReadLine());
+                GetMaxPrimeFactor(Number);
+            }
+        }
+
+        private static List<UInt16> GetPrimeNumbers(UInt16 Number, out BitArray IsPrimeNumber)
+        {
+            IsPrimeNumber = new((int)(Number + 1));
+            List<UInt16> PrimeNUmbers = new();
+            IsPrimeNumber.SetAll(true);
+            IsPrimeNumber.Set(0, false);
+            IsPrimeNumber.Set(1, false);
+            UInt16 i;
+            for (i = 2; (i * i) <= Number; i++)
+            {
+                if (IsPrimeNumber[(int)i])
+                {
+                    PrimeNUmbers.Add(i);
+                    for (UInt16 j = (UInt16)(i * i); j <= Number; j += i)
+                        IsPrimeNumber[(int)j] = false;
+                }
+            }
+            for (; i <= Number; i++)
+                if (IsPrimeNumber[(int)i])
+                    PrimeNUmbers.Add(i);
+
+            return PrimeNUmbers;
+        }
+
+        private static void GetMaxPrimeFactor(UInt64 Number)
+        {
+            HashSet<UInt64> PrimeFactors = new();
+            for (UInt64 i = 2; (i * i) <= Number; i++)
+            {
+                while (Number % i == 0)
+                {
+                    if (!PrimeFactors.TryGetValue(i, out _))
+                        PrimeFactors.Add(i);
+                     
+                    Number /= i;
+                }
+            }
+            if (1 < Number)
+            {
+                if (!PrimeFactors.TryGetValue(Number, out _))
+                    PrimeFactors.Add(Number);
+            }
+            Console.WriteLine(PrimeFactors.Last());
+        }
+    }
+}
