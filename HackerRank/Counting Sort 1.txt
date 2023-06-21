@@ -1,0 +1,29 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            UInt32 NumberOfElements = Convert.ToUInt32(Console.ReadLine()), Number;
+            UInt32[] FrequencyArray = new UInt32[100];
+            string[] Input = Console.ReadLine().Split(' ');
+            for (int i = 0; i < Input.Length; i++)
+            {
+                Number = Convert.ToUInt32(Input[i]);
+                ++FrequencyArray[Number];
+            }
+            for (int i = 0; i < 100; i++)
+                Console.Write(FrequencyArray[i] + " ");
+        }
+    }
+}
