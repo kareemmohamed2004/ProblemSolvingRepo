@@ -1,0 +1,70 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            Dictionary<int, List<int>> Managers = new Dictionary<int, List<int>>();
+            Dictionary<int, int> VisitedManagers = new Dictionary<int, int>();  //This dictionary represents the visited managers and the reached level by their employees.
+            int NumberOfEmployees = Convert.ToInt32(Console.ReadLine());
+            int EmployeeManager;
+            for (int i = 1; i <= NumberOfEmployees; i++)
+            {
+                EmployeeManager = Convert.ToInt32(Console.ReadLine());
+                if(Managers.TryGetValue(EmployeeManager, out List<int> EmployeesOfManager))
+                    EmployeesOfManager.Add(i);
+                else
+                    Managers.TryAdd(EmployeeManager, new List<int>() { i });
+            }
+            Console.WriteLine(GetCountOfLevelsProducedByEmployeesOfAllMangers(Managers));
+        }
+
+        private static int GetCountOfLevelsProducedByEmployeesOfAllMangers(Dictionary<int, List<int>> Managers)
+        {
+            Dictionary<int, int> VisitedManagers = new Dictionary<int, int>();
+            int MaximumReachedLevel, CurrentReachedLevel, Level;
+            MaximumReachedLevel = 0;
+            foreach (var Manager in Managers)
+            {
+                Level = 1;
+                if (Manager.Key == -1)
+                    Level = 0;
+                CurrentReachedLevel = GetCountOfLevelsProducedByEmployeesOfEachManger(Manager.Key, Managers, VisitedManagers, Level);
+                if (MaximumReachedLevel < CurrentReachedLevel)
+                    MaximumReachedLevel = CurrentReachedLevel;
+            }
+            return MaximumReachedLevel;
+        }
+
+        private static int GetCountOfLevelsProducedByEmployeesOfEachManger(int Manager, Dictionary<int, List<int>> Managers, Dictionary<int, int> VisitedManagers, int Level)
+        {
+            if(!Managers.ContainsKey(Manager))
+                return Level;
+            if (VisitedManagers.TryGetValue(Manager, out int ReachedLevel))
+                return ReachedLevel + (Level - 1);    //Subtract 1 from the level to get the count of previous levels which had been traversed before the current level in the current path.
+            List<int> EmployeesOfManager = Managers[Manager];
+            int CurrentManager, CurrentReachedLevel, MaximumReachedLevel;
+            MaximumReachedLevel = 0;
+            for (int i = 0; i < EmployeesOfManager.Count; i++)
+            {
+                CurrentManager = EmployeesOfManager[i];
+                CurrentReachedLevel = GetCountOfLevelsProducedByEmployeesOfEachManger(CurrentManager, Managers, VisitedManagers, Level + 1);
+                if (MaximumReachedLevel < CurrentReachedLevel)
+                    MaximumReachedLevel = CurrentReachedLevel;
+            }
+            if (0 < MaximumReachedLevel)
+                VisitedManagers.TryAdd(Manager, MaximumReachedLevel);
+            return MaximumReachedLevel;
+        }
+    }
+}
