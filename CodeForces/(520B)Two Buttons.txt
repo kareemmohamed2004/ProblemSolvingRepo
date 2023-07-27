@@ -1,0 +1,68 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            Dictionary<int, List<int>> NodesWithTheirNeighbors = new();
+            int InitialNumber, TargerNumber;
+            var Temp = Console.ReadLine().Split(' ');
+            InitialNumber = Convert.ToInt32(Temp[0]);
+            TargerNumber = Convert.ToInt32(Temp[1]);
+            Console.WriteLine(TraverseGraph(InitialNumber, TargerNumber));
+        }
+
+        private static int TraverseGraph(int StartingNumber,int TargetNumber)
+        {
+            return BFS(StartingNumber, TargetNumber);
+        }
+        private static int BFS(int StartingNumber,int TargetNamber)
+        {
+            //Tuple Item1 refers to node value
+            //Tuple Item2 refers to number of traveled edges to reach this node.
+            if (StartingNumber == TargetNamber)
+                return 0;
+            int CountOfCurrentOperations = 0;
+            Tuple<int, int> StartingNode = new(StartingNumber, CountOfCurrentOperations);
+            Queue<Tuple<int, int>> NodeChildren = new();
+            HashSet<int> VisitedNodes = new();
+            NodeChildren.Enqueue(StartingNode);
+            List<int> ChildrenOfCurrentNode = new();
+            int RedButtonResult, BlueButtonResult;
+            while (0 < NodeChildren.Count)
+            {
+                Tuple<int, int> CurrentNode = NodeChildren.Dequeue();
+                VisitedNodes.Add(CurrentNode.Item1);
+                RedButtonResult = CurrentNode.Item1 * 2;
+                BlueButtonResult = CurrentNode.Item1 - 1;
+                if (RedButtonResult <= 10000)
+                    ChildrenOfCurrentNode.Add(CurrentNode.Item1 * 2);
+                if (0 < BlueButtonResult)
+                    ChildrenOfCurrentNode.Add(CurrentNode.Item1 - 1);
+                CountOfCurrentOperations = CurrentNode.Item2;
+                foreach (var Child in ChildrenOfCurrentNode)
+                {
+                    if (!VisitedNodes.Contains(Child))
+                    {
+                        if (Child != TargetNamber)
+                            NodeChildren.Enqueue(new Tuple<int, int>(Child, CountOfCurrentOperations + 1));
+                        else
+                            return CountOfCurrentOperations + 1;
+                    }
+                }
+                ChildrenOfCurrentNode.Clear();
+            }
+            return 0;
+        }
+    }
+}

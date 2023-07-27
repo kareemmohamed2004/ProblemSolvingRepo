@@ -1,0 +1,69 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            Dictionary<int, List<int>> NodesWithTheirNeighbors = new();
+            int NumberOfNodes, EdgeStart, EdgeEnd;
+            var Temp = Console.ReadLine().Split(' ');
+            NumberOfNodes = Convert.ToInt32(Temp[0]);
+            for (int i = 0; i < NumberOfNodes - 1; i++)
+            {
+                Temp = Console.ReadLine().Split(' ');
+                EdgeStart = Convert.ToInt32(Temp[0]);
+                EdgeEnd = Convert.ToInt32(Temp[1]);
+                if (NodesWithTheirNeighbors.ContainsKey(EdgeStart))
+                    NodesWithTheirNeighbors[EdgeStart].Add(EdgeEnd);
+                else
+                    NodesWithTheirNeighbors.TryAdd(EdgeStart, new List<int>() { EdgeEnd });
+                if (NodesWithTheirNeighbors.ContainsKey(EdgeEnd))
+                    NodesWithTheirNeighbors[EdgeEnd].Add(EdgeStart);
+                else
+                    NodesWithTheirNeighbors.TryAdd(EdgeEnd, new List<int>() { EdgeStart });
+            }
+            Console.WriteLine(TraverseGraph(NodesWithTheirNeighbors));
+        }
+
+        private static int TraverseGraph(Dictionary<int, List<int>> NodesWithTheirChildren)
+        {
+
+            return BFS(BFS(NodesWithTheirChildren.First().Key, NodesWithTheirChildren).Item1, NodesWithTheirChildren).Item2;
+        }
+
+        private static Tuple<int,int> BFS(int Node, Dictionary<int, List<int>> NodesWithTheirChildren)
+        {
+            //Tuple Item1 refers to node value
+            //Tuple Item2 refers to number of traveled edges to reach this node.
+            Tuple<int, int> FurthestNode = new(Node, 0);
+            Queue<Tuple<int, int>> NodeChildren = new();
+            HashSet<int> VisitedNodes = new();
+            NodeChildren.Enqueue(FurthestNode);
+            while (0 < NodeChildren.Count)
+            {
+                Tuple<int, int> CurrentNode = NodeChildren.Dequeue();
+                VisitedNodes.Add(CurrentNode.Item1);
+                if (FurthestNode.Item2 < CurrentNode.Item2)
+                    FurthestNode = new(CurrentNode.Item1, CurrentNode.Item2);
+                List<int> ChildrenOfCurrentNode = NodesWithTheirChildren[CurrentNode.Item1];
+                int CountOfCurrentEdges = CurrentNode.Item2;
+                foreach (var Child in ChildrenOfCurrentNode)
+                {
+                    if (!VisitedNodes.Contains(Child))
+                        NodeChildren.Enqueue(new Tuple<int, int>(Child, CountOfCurrentEdges + 1));
+                }
+            }
+            return FurthestNode;
+        }
+    }
+}

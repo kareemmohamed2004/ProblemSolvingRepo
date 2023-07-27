@@ -1,0 +1,85 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            Dictionary<int, List<int>> NodesWithTheirNeighbors = new();
+            int NumberOfNodes, NumberOfEdges, EdgeStart, EdgeEnd, NumberOfQueries, StartingNode;
+            NumberOfQueries = Convert.ToInt32(Console.ReadLine());
+            for (int i = 0; i < NumberOfQueries; i++)
+            {
+                var Temp = Console.ReadLine().Split(' ');
+                NumberOfNodes = Convert.ToInt32(Temp[0]);
+                NumberOfEdges = Convert.ToInt32(Temp[1]);
+                for (int j = 0; j < NumberOfEdges; j++)
+                {
+                    Temp = Console.ReadLine().Split(' ');
+                    EdgeStart = Convert.ToInt32(Temp[0]);
+                    EdgeEnd = Convert.ToInt32(Temp[1]);
+                    if (NodesWithTheirNeighbors.ContainsKey(EdgeStart))
+                        NodesWithTheirNeighbors[EdgeStart].Add(EdgeEnd);
+                    else
+                        NodesWithTheirNeighbors.TryAdd(EdgeStart, new List<int>() { EdgeEnd });
+                    if (NodesWithTheirNeighbors.ContainsKey(EdgeEnd))
+                        NodesWithTheirNeighbors[EdgeEnd].Add(EdgeStart);
+                    else
+                        NodesWithTheirNeighbors.TryAdd(EdgeEnd, new List<int>() { EdgeStart });
+                }
+                StartingNode = Convert.ToInt32(Console.ReadLine());
+                var Result = TraverseGraph(NumberOfNodes, StartingNode, NodesWithTheirNeighbors);
+                foreach (var item in Result)
+                    if (item != 0)
+                        Console.Write(item + " ");
+                Console.WriteLine();
+                NodesWithTheirNeighbors.Clear();
+            }
+        }
+
+        private static Int64[] TraverseGraph(int NumberOfNodes, int StartingNode, Dictionary<int, List<int>> NodesWithTheirChildren)
+        {
+            return BFS(StartingNode, NodesWithTheirChildren, NumberOfNodes);
+        }
+
+        private static Int64[] BFS(int Node, Dictionary<int, List<int>> NodesWithTheirChildren,int NumberOfNodes)
+        {
+            Int64[] FinalResult = new Int64[NumberOfNodes + 1];
+            for (int i = 1; i <= NumberOfNodes; i++)
+                FinalResult[i] = -1;
+            bool[] VisitedNodes = new bool[NumberOfNodes + 1];
+            Queue<int> NodeChildren = new();
+            NodeChildren.Enqueue(Node);
+            VisitedNodes[Node] = true;
+            FinalResult[Node] = 0;
+            List<int> ChildrenOfCurrentNode;
+            while (0 < NodeChildren.Count)
+            {
+                int CurrentNode = NodeChildren.Dequeue();
+                if (NodesWithTheirChildren.ContainsKey(CurrentNode))
+                    ChildrenOfCurrentNode = NodesWithTheirChildren[CurrentNode];
+                else
+                    ChildrenOfCurrentNode = new();
+                foreach (var Child in ChildrenOfCurrentNode)
+                {
+                    if (!VisitedNodes[Child])
+                    {
+                        VisitedNodes[Child] = true;
+                        FinalResult[Child] = FinalResult[CurrentNode] + 6;
+                        NodeChildren.Enqueue(Child);
+                    }
+                }
+            }
+            return FinalResult;
+        }
+    }
+}

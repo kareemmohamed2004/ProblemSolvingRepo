@@ -1,0 +1,91 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            int NumberOfRows, NumberOfColumns, NumberOfRequiredWalls, NumberOfEmtyCellsInTheOriginalMaze;
+            string[] Inputs = Console.ReadLine().Split(' ');
+            string Input;
+            NumberOfRows = Convert.ToInt32(Inputs[0]);
+            NumberOfColumns = Convert.ToInt32(Inputs[1]);
+            NumberOfRequiredWalls = Convert.ToInt32(Inputs[2]);
+            NumberOfEmtyCellsInTheOriginalMaze = 0;
+            char[,] OriginalMaze = new char[NumberOfRows, NumberOfColumns];
+            for (int i = 0; i < NumberOfRows; i++)
+            {
+                Input = Console.ReadLine();
+                for (int j = 0; j < Input.Length; j++)
+                {
+                    OriginalMaze[i,j] = Input[j];
+                    if (Input[j] == '.')
+                        ++NumberOfEmtyCellsInTheOriginalMaze;
+                }
+            }
+
+            DrawConnectedMaze(OriginalMaze, NumberOfRows, NumberOfColumns, NumberOfEmtyCellsInTheOriginalMaze-NumberOfRequiredWalls);
+        }
+        private static void DrawConnectedMaze(char[,] OriginalMaze, int NumberOfRows, int NumberOfColumns,int NumberOfCurrentEmptyCells)
+        {
+            bool[,] VisitedEmptyCells = new bool[NumberOfRows, NumberOfColumns];
+            int CountOfCurrentEmptyCells = NumberOfCurrentEmptyCells;
+            bool Result = false;
+            for (int i = 0; i < NumberOfRows; i++)
+                for (int j = 0; j < NumberOfColumns; j++)
+                    if (OriginalMaze[i, j] == '.' && !VisitedEmptyCells[i,j])
+                    {
+                        bool[,] ConnectedEmptyCells = new bool[NumberOfRows, NumberOfColumns];
+                        Result = ConnectedMazeDFS(i, j, OriginalMaze, VisitedEmptyCells, ConnectedEmptyCells, NumberOfRows, NumberOfColumns, ref CountOfCurrentEmptyCells);
+                        if(Result)
+                        {
+                            for (int k = 0; k < NumberOfRows; k++)
+                            {
+                                for (int v = 0; v < NumberOfColumns; v++)
+                                {
+                                    if (OriginalMaze[k, v] == '.' && !ConnectedEmptyCells[k, v])
+                                        Console.Write("X");
+                                    else
+                                        Console.Write(OriginalMaze[k,v]);
+                                }
+                                Console.WriteLine();
+                            }
+                            return;
+                        }
+                    }
+        }
+        private static bool ConnectedMazeDFS(int CurrentRow, int CurrentColumn, char[,] OriginalMaze, bool[,] VisitedEmptyCells, bool[,] ConnectedEmptyCells, int NumberOfRows, int NumberOfColumns, ref int CountOfCurrentEmptyCells)
+        {
+            if (CountOfCurrentEmptyCells == 0)
+                return true;
+
+            if (CurrentRow < 0 || CurrentColumn < 0 || NumberOfRows <= CurrentRow || NumberOfColumns <= CurrentColumn || VisitedEmptyCells[CurrentRow, CurrentColumn] || OriginalMaze[CurrentRow, CurrentColumn] == '#' || OriginalMaze[CurrentRow, CurrentColumn] == 'X')
+                return false;
+
+            VisitedEmptyCells[CurrentRow, CurrentColumn] = true;
+            ConnectedEmptyCells[CurrentRow, CurrentColumn] = true;
+            bool Result;
+            --CountOfCurrentEmptyCells;
+
+
+            Result = ConnectedMazeDFS(CurrentRow, CurrentColumn + 1, OriginalMaze, VisitedEmptyCells, ConnectedEmptyCells, NumberOfRows, NumberOfColumns, ref CountOfCurrentEmptyCells) ||
+
+            ConnectedMazeDFS(CurrentRow + 1, CurrentColumn, OriginalMaze, VisitedEmptyCells, ConnectedEmptyCells, NumberOfRows, NumberOfColumns, ref CountOfCurrentEmptyCells) ||
+
+            ConnectedMazeDFS(CurrentRow, CurrentColumn - 1, OriginalMaze, VisitedEmptyCells, ConnectedEmptyCells, NumberOfRows, NumberOfColumns, ref CountOfCurrentEmptyCells) ||
+
+            ConnectedMazeDFS(CurrentRow - 1, CurrentColumn, OriginalMaze, VisitedEmptyCells, ConnectedEmptyCells, NumberOfRows, NumberOfColumns, ref CountOfCurrentEmptyCells);
+
+            return Result;
+        }
+    }
+}
