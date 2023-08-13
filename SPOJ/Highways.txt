@@ -1,0 +1,92 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            int NumberOfTestCases, NumberOfCities, NumberOfHighWays, StartCity, DestinationCity, EdgeStart, EdgeEnd, Cost;
+            NumberOfTestCases = Convert.ToInt32(Console.ReadLine());
+            string[] Input;
+            List<Tuple<int, int>>[] CitiesWithTheirNeighbors;
+            for (int i = 0; i < NumberOfTestCases; i++)
+            {
+                Input = Console.ReadLine().Split(" ");
+                NumberOfCities = Convert.ToInt32(Input[0]);
+                NumberOfHighWays = Convert.ToInt32(Input[1]);
+                StartCity = Convert.ToInt32(Input[2]);
+                DestinationCity = Convert.ToInt32(Input[3]);
+                CitiesWithTheirNeighbors = new List<Tuple<int, int>>[NumberOfCities + 1];
+                for (int j = 0; j < NumberOfHighWays; j++)
+                {
+                    Input = Console.ReadLine().Split(" ");
+                    EdgeStart = Convert.ToInt32(Input[0]);
+                    EdgeEnd = Convert.ToInt32(Input[1]);
+                    Cost = Convert.ToInt32(Input[2]);
+
+                    if (EdgeStart != EdgeEnd)
+                    {
+                        if (CitiesWithTheirNeighbors[EdgeStart] is not null)
+                            CitiesWithTheirNeighbors[EdgeStart].Add(new(EdgeEnd, Cost));
+                        else
+                            CitiesWithTheirNeighbors[EdgeStart] = new List<Tuple<int, int>>() { new(EdgeEnd, Cost) };
+
+                        if (CitiesWithTheirNeighbors[EdgeEnd] is not null)
+                            CitiesWithTheirNeighbors[EdgeEnd].Add(new(EdgeStart, Cost));
+                        else
+                            CitiesWithTheirNeighbors[EdgeEnd] = new List<Tuple<int, int>>() { new(EdgeStart, Cost) };
+                    }
+                }
+                int Result = GetMinimumDistanceFromStartCityToDestinationCity(CitiesWithTheirNeighbors, StartCity, DestinationCity, NumberOfCities);
+
+                if (Result == int.MaxValue)
+                    Console.WriteLine("NONE");
+                else
+                    Console.WriteLine(Result);
+            }
+        }
+
+        private static int GetMinimumDistanceFromStartCityToDestinationCity(List<Tuple<int, int>>[] CitiesWithTheirNeighbors, int StartCity, int EndCity, int NumberOfCities)
+        {
+            int CurrentCity, CurrentCityCost;
+            int[] CitiesMinimumCost = new int[NumberOfCities + 1];
+            var PriorityQueue = new PriorityQueue<int, int>(Comparer<int>.Create((x, y) => x.CompareTo(y)));
+            for (int i = 1; i < CitiesMinimumCost.Length; i++)
+                CitiesMinimumCost[i] = int.MaxValue;
+
+            //Item1 is the number of the neighbor city
+            //Item2 is cost to the neighbor city
+            CurrentCity = StartCity;
+            CurrentCityCost = 0;
+            CitiesMinimumCost[CurrentCity] = CurrentCityCost;
+            PriorityQueue.Enqueue(CurrentCity, CurrentCityCost);
+            while (PriorityQueue.Count > 0)
+            {
+                CurrentCity = PriorityQueue.Dequeue();
+                CurrentCityCost = CitiesMinimumCost[CurrentCity];
+                var CurrentCityNeighbores = CitiesWithTheirNeighbors[CurrentCity];
+                if (CurrentCityNeighbores is not null)
+                {
+                    foreach (var Neighbor in CurrentCityNeighbores)
+                    {
+                        if (CurrentCityCost + Neighbor.Item2 < CitiesMinimumCost[Neighbor.Item1])
+                        {
+                            CitiesMinimumCost[Neighbor.Item1] = CurrentCityCost + Neighbor.Item2;
+                            PriorityQueue.Enqueue(Neighbor.Item1, CitiesMinimumCost[Neighbor.Item1]);
+                        }
+                    }
+                }
+            }
+            return CitiesMinimumCost[EndCity];
+        }
+    }
+}

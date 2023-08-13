@@ -1,0 +1,95 @@
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            int StartingRow, StartingColumn, DestinationRow, DestinationColumn;
+            string[] Temp;
+            string Input;
+            while (!string.IsNullOrEmpty(Input = Console.ReadLine()))
+            {
+                Temp = Input.Split(' ');
+                StartingRow = Convert.ToInt32(Temp[0]);
+                StartingColumn = Convert.ToInt32(Temp[1]);
+                DestinationRow = Convert.ToInt32(Temp[2]);
+                DestinationColumn = Convert.ToInt32(Temp[3]);
+                Console.WriteLine(GetMinimumCost(StartingRow, StartingColumn, DestinationRow, DestinationColumn));
+            }
+        }
+
+        private static int GetMinimumCost(int StartingRow,int StartingColumn,int DestinationRow,int DestinationColumn)
+        {
+            if (StartingRow == DestinationRow && StartingColumn == DestinationColumn)
+                return 0;
+            int TotalCost = int.MaxValue;
+            bool IsReachable = false;
+            bool[,] Visited = new bool[8, 8];
+            Visited[StartingRow, StartingColumn] = true;
+            //Item1 is cell row number
+            //Item2 is cell column number
+            //Item3 is the total cost from the starting cell to this cell
+            var PriorityQueue = new PriorityQueue<Tuple<int,int,int>, int>(Comparer<int>.Create((x, y) => x.CompareTo(y)));
+            var ValidCells = GetNextValidCells(StartingRow, StartingColumn,0, Visited);
+            foreach (var Cell in ValidCells)
+                PriorityQueue.Enqueue(new(Cell.Item1, Cell.Item2, Cell.Item3), Cell.Item3);
+            while(PriorityQueue.Count > 0)
+            {
+                var CurrentCell = PriorityQueue.Dequeue();
+                Visited[CurrentCell.Item1, CurrentCell.Item2] = true;
+                if (CurrentCell.Item1 == DestinationRow && CurrentCell.Item2 == DestinationColumn)
+                {
+                    IsReachable = true;
+                    if (CurrentCell.Item3 < TotalCost)
+                        TotalCost = CurrentCell.Item3;
+                }
+                ValidCells = GetNextValidCells(CurrentCell.Item1, CurrentCell.Item2, CurrentCell.Item3, Visited);
+                foreach (var Cell in ValidCells)
+                    PriorityQueue.Enqueue(new(Cell.Item1, Cell.Item2, Cell.Item3), Cell.Item3);
+            }
+            if (!IsReachable)
+                TotalCost = -1;
+            return TotalCost;
+        }
+
+        private static List<Tuple<int, int, int>> GetNextValidCells(int CurrentCellRow, int CurrentCellColumn,int CurrentTotalCost, bool[,] Visited)
+        {
+            List<Tuple<int, int, int>> ValidCells = new();
+            
+            if (IsValidCell(CurrentCellRow + 1, CurrentCellColumn + 2, Visited))
+                ValidCells.Add(new(CurrentCellRow + 1, CurrentCellColumn + 2, CurrentTotalCost + (CurrentCellRow * (CurrentCellRow + 1)) + (CurrentCellColumn * (CurrentCellColumn + 2))));
+
+            if (IsValidCell(CurrentCellRow + 1, CurrentCellColumn - 2, Visited))
+                ValidCells.Add(new(CurrentCellRow + 1, CurrentCellColumn - 2, CurrentTotalCost + (CurrentCellRow * (CurrentCellRow + 1)) + (CurrentCellColumn * (CurrentCellColumn -2))));
+
+            if (IsValidCell(CurrentCellRow - 1, CurrentCellColumn + 2, Visited))
+                ValidCells.Add(new(CurrentCellRow - 1, CurrentCellColumn + 2,CurrentTotalCost + (CurrentCellRow * (CurrentCellRow - 1)) + (CurrentCellColumn * (CurrentCellColumn + 2))));
+
+            if (IsValidCell(CurrentCellRow - 1, CurrentCellColumn - 2, Visited))
+                ValidCells.Add(new(CurrentCellRow - 1, CurrentCellColumn - 2, CurrentTotalCost + (CurrentCellRow * (CurrentCellRow - 1)) + (CurrentCellColumn * (CurrentCellColumn - 2))));
+
+            if (IsValidCell(CurrentCellRow + 2, CurrentCellColumn + 1, Visited))
+                ValidCells.Add(new(CurrentCellRow + 2, CurrentCellColumn + 1, CurrentTotalCost + (CurrentCellRow * (CurrentCellRow + 2)) + (CurrentCellColumn * (CurrentCellColumn + 1))));
+
+            if (IsValidCell(CurrentCellRow - 2, CurrentCellColumn + 1, Visited))
+                ValidCells.Add(new(CurrentCellRow - 2, CurrentCellColumn + 1, CurrentTotalCost + (CurrentCellRow * (CurrentCellRow - 2)) + (CurrentCellColumn * (CurrentCellColumn + 1))));
+
+            if (IsValidCell(CurrentCellRow + 2, CurrentCellColumn - 1, Visited))
+                ValidCells.Add(new(CurrentCellRow + 2, CurrentCellColumn - 1, CurrentTotalCost + (CurrentCellRow * (CurrentCellRow + 2)) + (CurrentCellColumn * (CurrentCellColumn - 1))));
+
+            if (IsValidCell(CurrentCellRow - 2, CurrentCellColumn - 1, Visited))
+                ValidCells.Add(new(CurrentCellRow - 2, CurrentCellColumn - 1, CurrentTotalCost + (CurrentCellRow * (CurrentCellRow - 2)) + (CurrentCellColumn * (CurrentCellColumn - 1))));
+
+            return ValidCells;
+        }
+
+        private static bool IsValidCell(int CellRow,int CellColumn,bool[,] Visited)
+        {
+            return ((0 <= CellRow && CellRow < 8 && 0 <= CellColumn && CellColumn < 8) && !Visited[CellRow, CellColumn]);
+        }
+    }
+}

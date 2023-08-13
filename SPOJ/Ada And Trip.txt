@@ -1,0 +1,95 @@
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            int NumberOfCities, NumberOfRoads, NumberOfQueries, EdgeStart, EdgeEnd, EdgeLength, StartCity;
+            List<Tuple<int, int>>[] CitiesWithTheirNeighbors;
+            string[] Input = Console.ReadLine().Split(' ');
+            NumberOfCities = Convert.ToInt32(Input[0]);
+            NumberOfRoads = Convert.ToInt32(Input[1]);
+            NumberOfQueries = Convert.ToInt32(Input[2]);
+            CitiesWithTheirNeighbors = new List<Tuple<int, int>>[NumberOfCities + 1];
+            for (int i = 0; i < NumberOfRoads; i++)
+            {
+                Input = Console.ReadLine().Split(' ');
+                EdgeStart = Convert.ToInt32(Input[0]);
+                EdgeEnd = Convert.ToInt32(Input[1]);
+                EdgeLength = Convert.ToInt32(Input[2]);
+
+                if (EdgeStart != EdgeEnd)
+                {
+                    if (CitiesWithTheirNeighbors[EdgeStart] is not null)
+                        CitiesWithTheirNeighbors[EdgeStart].Add(new(EdgeEnd, EdgeLength));
+                    else
+                        CitiesWithTheirNeighbors[EdgeStart] = new List<Tuple<int, int>>() { new(EdgeEnd, EdgeLength) };
+
+                    if (CitiesWithTheirNeighbors[EdgeEnd] is not null)
+                        CitiesWithTheirNeighbors[EdgeEnd].Add(new(EdgeStart, EdgeLength));
+                    else
+                        CitiesWithTheirNeighbors[EdgeEnd] = new List<Tuple<int, int>>() { new(EdgeStart, EdgeLength) };
+                }
+            }
+            for (int i = 0; i < NumberOfQueries; i++)
+            {
+                StartCity = Convert.ToInt32(Console.ReadLine());
+                var Result = GetLengthAndCountOfFurthestCity(CitiesWithTheirNeighbors, StartCity);
+                Console.WriteLine(Result.Item1 + " " + Result.Item2);
+            }
+        }
+
+        private static Tuple<int, int> GetLengthAndCountOfFurthestCity(List<Tuple<int, int>>[] CitiesWithTheirNeighbors, int StartCity)
+        {
+            int CurrentCity, NeighborCity;
+            int TotalCostToCurrentCity, LengthOfFurthestCity, CountOfFurthestCities, CostFromCurrentCityToNeighbor;
+            int[] CitiesMinimumCost = new int[CitiesWithTheirNeighbors.Length];
+            var PriorityQueue = new PriorityQueue<int, int>(Comparer<int>.Create((x, y) => x.CompareTo(y)));
+            for (int i = 0; i < CitiesMinimumCost.Length; i++)
+                CitiesMinimumCost[i] = int.MaxValue;
+
+            CurrentCity = StartCity;
+            TotalCostToCurrentCity = 0;
+            CitiesMinimumCost[CurrentCity] = TotalCostToCurrentCity;
+            PriorityQueue.Enqueue(CurrentCity, TotalCostToCurrentCity);
+            LengthOfFurthestCity = -1;
+            CountOfFurthestCities = -1;
+            while (PriorityQueue.Count > 0)
+            {
+                CurrentCity = PriorityQueue.Dequeue();
+                TotalCostToCurrentCity = CitiesMinimumCost[CurrentCity];
+
+                if (LengthOfFurthestCity < TotalCostToCurrentCity)
+                {
+                    LengthOfFurthestCity = TotalCostToCurrentCity;
+                    CountOfFurthestCities = 1;
+                }
+                else
+                    if (LengthOfFurthestCity == TotalCostToCurrentCity)
+                        ++CountOfFurthestCities;
+
+                var CurrentCityNeighbores = CitiesWithTheirNeighbors[CurrentCity];
+                if (CurrentCityNeighbores is not null)
+                {
+                    foreach (var Neighbor in CurrentCityNeighbores)
+                    {
+                        //Item1 is the number of the neighbor city
+                        //Item2 is cost to the neighbor city
+                        NeighborCity = Neighbor.Item1;
+                        CostFromCurrentCityToNeighbor = Neighbor.Item2;
+                        if (TotalCostToCurrentCity + CostFromCurrentCityToNeighbor < CitiesMinimumCost[NeighborCity])
+                        {
+                            CitiesMinimumCost[NeighborCity] = TotalCostToCurrentCity + CostFromCurrentCityToNeighbor;
+                            PriorityQueue.Enqueue(NeighborCity, CitiesMinimumCost[NeighborCity]);
+                        }
+                    }
+                }
+            }
+            return new(LengthOfFurthestCity, CountOfFurthestCities);
+        }
+    }
+}

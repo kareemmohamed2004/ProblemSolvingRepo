@@ -1,0 +1,83 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ProblemAnswer
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProblemAnswer();
+        }
+        private static void ProblemAnswer()
+        {
+            int NumberOfForestRows, NumberOfForestColumns, NumberOfStartingBurningTrees;
+            var InputFile = new StreamReader("input.txt");
+            string[] Input = InputFile.ReadLine().Split(" ");
+            Queue<Tuple<int, int>> CoordinatesOfBurningTrees = new();
+            NumberOfForestRows = Convert.ToInt32(Input[0]);
+            NumberOfForestColumns = Convert.ToInt32(Input[1]);
+            NumberOfStartingBurningTrees = Convert.ToInt32(InputFile.ReadLine());
+            Input = InputFile.ReadLine().Split(" ");
+            bool[,] BurntTrees = new bool[NumberOfForestRows + 1, NumberOfForestColumns + 1];
+            int BurntTreeRow, BurntTreeColumn;
+            for (int i = 0; i < Input.Length; i += 2)
+            {
+                BurntTreeRow = Convert.ToInt32(Input[i]);
+                BurntTreeColumn = Convert.ToInt32(Input[i + 1]);
+                BurntTrees[BurntTreeRow, BurntTreeColumn] = true;
+                CoordinatesOfBurningTrees.Enqueue(new(BurntTreeRow, BurntTreeColumn));
+            }
+            Tuple<int, int> CoordinatesOfLastBurntTree = BFS(CoordinatesOfBurningTrees, BurntTrees, NumberOfForestRows, NumberOfForestColumns);
+            var OutputFile = "output.txt";
+            string ContentOfOutputFile = $"{CoordinatesOfLastBurntTree.Item1} {CoordinatesOfLastBurntTree.Item2}";
+            File.WriteAllText(OutputFile, ContentOfOutputFile);
+        }
+
+        private static bool IsValidCoordinates(int Row, int Column, int NumberOfRows, int NumberOfColumns)
+        {
+            return ((0 < Row) && (Row <= NumberOfRows) && (0 < Column) && (Column <= NumberOfColumns));
+        }
+
+        private static Tuple<int,int> BFS(Queue<Tuple<int,int>> CoordinatesOfBurningTrees, bool[,] BurntTrees, int NumberOfForestRows,int NumberOfForestColumns)
+        {
+            Tuple<int, int> LastTreeToBeBurnt = new(0, 0);
+            int LastRow, LastColumn;
+            while (0 < CoordinatesOfBurningTrees.Count)
+            {
+                LastTreeToBeBurnt = CoordinatesOfBurningTrees.Dequeue();
+                LastRow = LastTreeToBeBurnt.Item1;
+                LastColumn = LastTreeToBeBurnt.Item2;
+                BurntTrees[LastRow, LastColumn] = true;
+
+                if (IsValidCoordinates(LastRow, LastColumn + 1, NumberOfForestRows, NumberOfForestColumns) && !BurntTrees[LastRow, LastColumn + 1])
+                {
+                    BurntTrees[LastRow, LastColumn + 1] = true;
+                    CoordinatesOfBurningTrees.Enqueue(new(LastRow, LastColumn + 1));
+                }
+
+                if (IsValidCoordinates(LastRow + 1, LastColumn, NumberOfForestRows, NumberOfForestColumns) && !BurntTrees[LastRow + 1, LastColumn])
+                {
+                    BurntTrees[LastRow + 1, LastColumn] = true;
+                    CoordinatesOfBurningTrees.Enqueue(new(LastRow + 1, LastColumn));
+                }
+
+                if (IsValidCoordinates(LastRow, LastColumn - 1, NumberOfForestRows, NumberOfForestColumns) && !BurntTrees[LastRow, LastColumn - 1])
+                {
+                    BurntTrees[LastRow, LastColumn - 1] = true;
+                    CoordinatesOfBurningTrees.Enqueue(new(LastRow, LastColumn - 1));
+                }
+
+                if (IsValidCoordinates(LastRow - 1, LastColumn, NumberOfForestRows, NumberOfForestColumns) && !BurntTrees[LastRow - 1, LastColumn] )
+                {
+                    BurntTrees[LastRow - 1, LastColumn] = true;
+                    CoordinatesOfBurningTrees.Enqueue(new(LastRow - 1, LastColumn));
+                }
+            }
+            return LastTreeToBeBurnt;
+        }
+    }
+}
