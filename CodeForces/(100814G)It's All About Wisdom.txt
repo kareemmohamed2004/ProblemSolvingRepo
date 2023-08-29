@@ -1,0 +1,184 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+
+class City
+{
+private:
+    unsigned int CityNumber;
+    unsigned int CostFromNeighborCity;
+    unsigned int WisdomFromNeighborCity;
+    unsigned long TotalCostToCurrentCity;
+
+
+public:
+    City(unsigned int cityNumber = 0, unsigned int costFromNeighborCity = UINT_MAX, unsigned int wisdomFromNeighborCity = UINT_MAX,unsigned int totalCostToCurrentCity = UINT_MAX)
+    {
+        SetCityNumber(cityNumber);
+        SetCostFromNeighborCity(costFromNeighborCity);
+        SetWisdomFromNeighborCity(wisdomFromNeighborCity);
+        SetTotalCostToCurrentCity(totalCostToCurrentCity);
+    }
+
+    void SetCityNumber(unsigned int cityNumber)
+    {
+        this->CityNumber = cityNumber;
+    }
+
+    void SetCostFromNeighborCity(unsigned int costFromNeighborCity)
+    {
+        this->CostFromNeighborCity = costFromNeighborCity;
+    }
+
+    void SetWisdomFromNeighborCity(unsigned int wisdomFromNeighborCity)
+    {
+        this->WisdomFromNeighborCity = wisdomFromNeighborCity;
+    }
+
+    void SetTotalCostToCurrentCity(unsigned long totalCostToCurrentCity)
+    {
+        this->TotalCostToCurrentCity = totalCostToCurrentCity;
+    }
+
+    unsigned int GetCityNumber() const
+    {
+        return this->CityNumber;
+    }
+
+    unsigned int GetCostFromNeighborCity() const
+    {
+        return this->CostFromNeighborCity;
+    }
+
+    unsigned int GetWisdomFromNeighborCity() const
+    {
+        return this->WisdomFromNeighborCity;
+    }
+
+    unsigned long GetTotalCostToCurrentCity() const
+    {
+        return this->TotalCostToCurrentCity;
+    }
+};
+
+struct CityComparer
+{
+public:
+    bool operator()(const City& city1, const City& city2)
+    {
+        return city1.GetTotalCostToCurrentCity() > city2.GetTotalCostToCurrentCity();
+    }
+};
+
+
+bool Djikstra(vector<vector<City>> CitiesWithTheirNeighbors, unsigned int StartCity, unsigned int DestinationCity,unsigned int MaximumAllowedWisdom, unsigned int TotalCost)
+{
+    unsigned long CurrentTotalCost, CurrentCityNumber, TotalCostToCurrentCity, CostFromCurrentCityToNeighborCity, WisdomFromCurrentCityToNeighborCity, MaximumWisdomToCurrentCity, NeighborCityNumber;
+    vector<unsigned long> CitiesMinimumCosts;
+    for (unsigned int i = 0; i < CitiesWithTheirNeighbors.size(); i++)
+        CitiesMinimumCosts.push_back(ULLONG_MAX);
+
+    priority_queue<City,vector<City>,CityComparer> Cities;
+    vector<City> CityNeighbors;
+    City CurrentCity(StartCity,0,0,0);
+    City NeighborCity;
+    CitiesMinimumCosts[StartCity] = 0;
+    Cities.push(CurrentCity);
+    while (!Cities.empty())
+    {
+        CurrentCity = Cities.top();
+        Cities.pop();
+        CurrentCityNumber = CurrentCity.GetCityNumber();
+        TotalCostToCurrentCity = CurrentCity.GetTotalCostToCurrentCity();
+        if (CurrentCityNumber == DestinationCity)
+            return true;
+
+        CityNeighbors = CitiesWithTheirNeighbors[CurrentCityNumber];
+        for (unsigned int i = 0; i < CityNeighbors.size(); i++)
+        {
+            NeighborCity = CityNeighbors[i];
+            NeighborCityNumber = NeighborCity.GetCityNumber();
+            CostFromCurrentCityToNeighborCity = NeighborCity.GetCostFromNeighborCity();
+            WisdomFromCurrentCityToNeighborCity = NeighborCity.GetWisdomFromNeighborCity();
+
+            if ((MaximumAllowedWisdom < WisdomFromCurrentCityToNeighborCity) || (TotalCost < (TotalCostToCurrentCity + CostFromCurrentCityToNeighborCity)))
+                continue;
+
+            if ((TotalCostToCurrentCity + CostFromCurrentCityToNeighborCity) < CitiesMinimumCosts[NeighborCityNumber])
+            {
+                CitiesMinimumCosts[NeighborCityNumber] = TotalCostToCurrentCity + CostFromCurrentCityToNeighborCity;
+                NeighborCity.SetTotalCostToCurrentCity(TotalCostToCurrentCity + CostFromCurrentCityToNeighborCity);
+                Cities.push(NeighborCity);
+            }
+        }
+    }
+    return false;
+}
+
+int GetMinimumWisdom(vector<vector<City>> CitiesWithTheirNeighbors, unsigned int StartCity, unsigned int DestinationCity, unsigned int TotalCost, unsigned int MinWisdom, unsigned int MaxWisdom)
+{
+    int MinimumWisdomAchieved = MaxWisdom + 1;
+    unsigned int Start,Middle, End;
+    bool IsDestinationReachable;
+    Start = MinWisdom;
+    End = MaxWisdom;
+    while (Start < End)
+    {
+        Middle = (Start + End) / 2;
+        IsDestinationReachable = Djikstra(CitiesWithTheirNeighbors, StartCity, DestinationCity, Middle, TotalCost);
+        if (IsDestinationReachable)
+        {
+            End = Middle;
+            MinimumWisdomAchieved = Middle;
+        }
+        else
+            Start = Middle + 1;
+    }
+    IsDestinationReachable = Djikstra(CitiesWithTheirNeighbors, StartCity, DestinationCity, Start, TotalCost);
+    if (IsDestinationReachable)
+        MinimumWisdomAchieved = Start;
+
+    IsDestinationReachable = Djikstra(CitiesWithTheirNeighbors, StartCity, DestinationCity, End, TotalCost);
+    if (IsDestinationReachable)
+        MinimumWisdomAchieved = End;
+
+    if (MinimumWisdomAchieved == MaxWisdom + 1)
+        MinimumWisdomAchieved = -1;
+    return MinimumWisdomAchieved;
+}
+
+int main()
+{
+    unsigned int NumberOfTestCases, NumberOfCities, NumberOfEdges, TotalCost, EdgeStart, EdgeEnd, EdgeCost, EdgeWisdom,MinWsidom,MaxWisdom;
+    cin >> NumberOfTestCases;
+    for (unsigned int TestCase = 0; TestCase < NumberOfTestCases; TestCase++)
+    {
+        vector<vector<City>> CitiesWithTheirNeighbors;
+        cin >> NumberOfCities >> NumberOfEdges >> TotalCost;
+        MinWsidom = UINT_MAX;
+        MaxWisdom = 1;
+        for (unsigned int i = 0; i < NumberOfCities + 1; i++)
+        {
+            vector<City> Neighbors;
+            CitiesWithTheirNeighbors.push_back(Neighbors);
+        }
+        for (unsigned int i = 0; i < NumberOfEdges; i++)
+        {
+            cin >> EdgeStart >> EdgeEnd >> EdgeCost >> EdgeWisdom;
+            City EdgeStartCity(EdgeStart, EdgeCost, EdgeWisdom);
+            City EdgeEndCity(EdgeEnd,EdgeCost,EdgeWisdom);
+            CitiesWithTheirNeighbors[EdgeStart].push_back(EdgeEndCity);
+            CitiesWithTheirNeighbors[EdgeEnd].push_back(EdgeStartCity);
+            if (EdgeWisdom < MinWsidom)
+                MinWsidom = EdgeWisdom;
+            else
+            {
+                if (MaxWisdom < EdgeWisdom)
+                    MaxWisdom = EdgeWisdom;
+            }
+        }
+        cout << GetMinimumWisdom(CitiesWithTheirNeighbors, 1, NumberOfCities, TotalCost - 1, MinWsidom, MaxWisdom) << "\n";
+    }
+    return 0;
+}

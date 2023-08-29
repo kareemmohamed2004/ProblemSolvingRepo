@@ -1,0 +1,84 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+#include<iomanip>
+#include<map>
+#include<set>
+#include<numeric>
+#include<tuple>
+using namespace std;
+
+unsigned long long GetLargestPrimeFactor(unsigned long long Number)
+{
+    unsigned long long Input, Divisor, LargestPrimeFactor;
+    Input = LargestPrimeFactor = Number;
+    bool IsFactorizationEnd = false;
+    while (!IsFactorizationEnd)
+    {
+        Divisor = 2;
+        while (Input % Divisor != 0)
+        {
+            if (Divisor % 2 != 0)
+                Divisor += 2;
+            else
+                ++Divisor;
+        }
+
+        Input /= Divisor;
+        LargestPrimeFactor = Divisor;
+        if (Input == 1)
+            IsFactorizationEnd = true;
+    }
+    return LargestPrimeFactor;
+}
+unsigned long long GCD(unsigned long long a, unsigned long long b)
+{
+    if (b == 0)
+        return a;
+    return GCD(b, a % b);
+}
+vector<unsigned long long> GetFactors(unsigned long long Number)
+{
+    vector<unsigned long long> Factors;
+    Factors.push_back(1);
+    for (unsigned long long i = 2; (i * i) <= Number; i++)
+    {
+        if (!(Number % i))
+        {
+            Factors.push_back(i);
+            if ((Number / i) != i)
+                Factors.push_back(Number / i);
+        }
+    }
+    Factors.push_back(Number);
+    return Factors;
+}
+
+bool IsPrime(unsigned short Number)
+{
+    for (unsigned short i = 2; (i * i) <= Number; i++)
+        if (Number % i == 0)
+            return false;
+    return true;
+}
+
+unsigned long long GetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ((unsigned long long)1 << Index);
+}
+unsigned long long SetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask | ((unsigned long long)1 << Index);
+}
+unsigned long long ClearBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ~((unsigned long long)1 << Index);
+}
+unsigned long long ToggleBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask ^ ((unsigned long long)1 << Index);
+}
