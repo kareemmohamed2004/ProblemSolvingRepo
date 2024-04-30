@@ -1,0 +1,74 @@
+class Solution {
+public:
+    vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges)
+{
+	vector<int> finaleResult;
+	if (n == 1)
+	{
+		finaleResult.push_back(0);
+		return finaleResult;
+	}
+
+	if (n == 2)
+	{
+		finaleResult.push_back(0);
+		finaleResult.push_back(1);
+		return finaleResult;
+	}
+
+	map<int, set<int>> adjacencyList;
+	int edgeStart, edgeEnd;
+	for (int i = 0; i < edges.size(); i++)
+	{
+		edgeStart = edges[i][0];
+		edgeEnd = edges[i][1];
+		if (adjacencyList.count(edgeStart) != 0)
+			adjacencyList[edgeStart].insert(edgeEnd);
+		else
+		{
+			set <int> neighbors;
+			neighbors.insert(edgeEnd);
+			adjacencyList.insert({ edgeStart, neighbors });
+		}
+
+		if (adjacencyList.count(edgeEnd) != 0)
+			adjacencyList[edgeEnd].insert(edgeStart);
+		else
+		{
+			set <int> neighbors;
+			neighbors.insert(edgeStart);
+			adjacencyList.insert({ edgeEnd, neighbors });
+		}
+	}
+
+	vector<pair<int,int>> mustDeletedNodesWithTheirNeighbors;
+	int nodeToBeDeleted, NeighborOfNodeToBeDeleted;
+	while (adjacencyList.size() > 2)
+	{
+		for (auto i = adjacencyList.begin(); i != adjacencyList.end();++i)
+		{
+			if (i->second.size() == 1)
+			{
+				nodeToBeDeleted = i->first;
+				NeighborOfNodeToBeDeleted = *(i->second.begin());
+				mustDeletedNodesWithTheirNeighbors.push_back(make_pair(nodeToBeDeleted, NeighborOfNodeToBeDeleted));
+			}
+		}
+
+		for (int v = 0; v < mustDeletedNodesWithTheirNeighbors.size(); v++)
+		{
+			nodeToBeDeleted = mustDeletedNodesWithTheirNeighbors[v].first;
+			NeighborOfNodeToBeDeleted = mustDeletedNodesWithTheirNeighbors[v].second;
+			adjacencyList[NeighborOfNodeToBeDeleted].erase(nodeToBeDeleted);
+			adjacencyList.erase(nodeToBeDeleted);
+		}
+
+		mustDeletedNodesWithTheirNeighbors.clear();
+	}
+
+	for (auto i = adjacencyList.begin(); i != adjacencyList.end(); i++)
+		finaleResult.push_back(i->first);
+
+	return finaleResult;
+}
+};
