@@ -1,0 +1,87 @@
+class Solution {
+public:
+	bool canFinish(int numCourses, vector<vector<int>>& prerequisites) 
+	{
+		//-1 means unknown status
+		if (prerequisites.size() == 0)
+			return true;
+
+		vector<int> IsIndependent(numCourses, -1);
+		int courseNumber, requiredCourseNumber;
+		map<int, vector<int>> adjacencyList;
+		queue<int> coursesToBeStudied;
+
+		for (int i = 0; i < prerequisites.size(); i++)
+		{
+			courseNumber = prerequisites[i][0];
+			requiredCourseNumber = prerequisites[i][1];
+			if (courseNumber == requiredCourseNumber)
+				return false;
+			IsIndependent[courseNumber] = 0;
+			
+			//If the required course doesn't depend on any course.
+			if (IsIndependent[requiredCourseNumber] != 0)
+				IsIndependent[requiredCourseNumber] = 1;
+
+			if (adjacencyList.count(requiredCourseNumber) != 0)
+				adjacencyList[requiredCourseNumber].push_back(courseNumber);
+			else
+			{
+				vector<int> nextCourses;
+				nextCourses.push_back(courseNumber);
+				adjacencyList[requiredCourseNumber].push_back(courseNumber);
+			}
+		}
+
+		for (int i = 0; i < IsIndependent.size(); i++)
+		{
+			if (IsIndependent[i] == 1)
+				coursesToBeStudied.push(i);
+			
+			//this line to setup this vector to be used as studied courses indicator.
+			//All vector elements will be false as no course has been studied yet.
+			IsIndependent[i] = 0;
+		}
+
+		if (coursesToBeStudied.empty())
+			return false;
+
+		vector<bool> isStudied(numCourses, false);
+		set<int> totalStudiedCourses;
+		bool result = true;
+		while (!coursesToBeStudied.empty())
+		{
+			requiredCourseNumber = coursesToBeStudied.front();
+			coursesToBeStudied.pop();
+			result = DFS(requiredCourseNumber, adjacencyList, isStudied, totalStudiedCourses);
+			if (!result)
+				return result;
+		}
+		if (totalStudiedCourses.size() != adjacencyList.size())
+			result = false;
+		return result;
+	}
+
+	bool DFS(int node, map<int, vector<int>>& adjacencyList, vector<bool>& isVisitedInTheCurrentPath, set<int> &totalVisitedNodes)
+	{
+		if (isVisitedInTheCurrentPath[node])
+			return false;
+		if (totalVisitedNodes.find(node) != totalVisitedNodes.end())
+			return true;
+		
+		vector<int> neighbors = adjacencyList[node];
+		int nextNode;
+		isVisitedInTheCurrentPath[node] = true;
+		totalVisitedNodes.insert(node);
+		bool result = true;
+		for (int i = 0; i < neighbors.size(); i++)
+		{
+			nextNode = neighbors[i];
+			result = DFS(nextNode, adjacencyList, isVisitedInTheCurrentPath, totalVisitedNodes);
+			if (!result)
+				break;
+		}
+		isVisitedInTheCurrentPath[node] = false;
+		return result;
+	}
+};
