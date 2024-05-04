@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int maxArea(vector<int>& height) 
+    {
+        unsigned int leftMostEnd, rightMostEnd, smallerEnd, diff;
+        unsigned long maxAmountOfWater = 0, currentAmountOfWater;
+        leftMostEnd = 0;
+        rightMostEnd = height.size() - 1;
+
+        while (leftMostEnd < rightMostEnd)
+        {
+            smallerEnd = min(height[leftMostEnd], height[rightMostEnd]);
+            diff = rightMostEnd - leftMostEnd;
+            currentAmountOfWater = smallerEnd * diff;
+            if (maxAmountOfWater < currentAmountOfWater)
+                maxAmountOfWater = currentAmountOfWater;
+
+            if (smallerEnd == height[leftMostEnd])
+                ++leftMostEnd;
+            if (smallerEnd == height[rightMostEnd])
+                --rightMostEnd;
+        }
+        return maxAmountOfWater;
+    }
+};
