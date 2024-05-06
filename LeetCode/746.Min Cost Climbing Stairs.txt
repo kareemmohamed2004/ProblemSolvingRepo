@@ -1,0 +1,39 @@
+class Solution
+{
+public:
+    int minCostClimbingStairs(vector<int>& cost)
+    {
+        vector<int> minCostFromEachStair(cost.size(), -1);
+        minCostFromEachStair[cost.size() - 1] = cost[cost.size() - 1];
+        minCostFromEachStair[cost.size() - 2] = cost[cost.size() - 2];
+        return min(CalculateMinCost(cost, 0, 0, minCostFromEachStair), CalculateMinCost(cost, 1, 0, minCostFromEachStair));
+    }
+private:
+    int CalculateMinCost(vector<int>& cost, int index, unsigned int currentTotalCost, vector<int> &minCostFromEachStair)
+    {
+        int indexOfLastStair, indexOfSecondLastStair;
+        indexOfLastStair = cost.size() - 1;
+        indexOfSecondLastStair = cost.size() - 2;
+        if (index == indexOfSecondLastStair || index == indexOfLastStair)
+            return minCostFromEachStair[index];
+
+
+        int firstValue, secondValue, minCostStartingFromCurrentStair, currentStairCost;
+        currentStairCost = cost[index];
+       
+        if (minCostFromEachStair[index + 1] == -1)
+            firstValue = CalculateMinCost(cost, index + 1, currentTotalCost + currentStairCost, minCostFromEachStair);
+        else
+            firstValue = minCostFromEachStair[index + 1];
+
+        if (minCostFromEachStair[index + 2] == -1)
+            secondValue = CalculateMinCost(cost, index + 2, currentTotalCost + currentStairCost, minCostFromEachStair);
+        else
+            secondValue = minCostFromEachStair[index + 2];
+
+        minCostStartingFromCurrentStair = currentStairCost + min(firstValue, secondValue);
+        if (minCostFromEachStair[index] == -1 || minCostStartingFromCurrentStair < minCostFromEachStair[index])
+            minCostFromEachStair[index] = minCostStartingFromCurrentStair;
+        return minCostStartingFromCurrentStair;
+    }
+};
