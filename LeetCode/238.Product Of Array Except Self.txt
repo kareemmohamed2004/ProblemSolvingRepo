@@ -1,0 +1,27 @@
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) 
+    {
+        int reversedCurrentProduct = 1;
+        int* reversedCurrentProductPtr;
+        reversedCurrentProductPtr = &reversedCurrentProduct;
+        GetProductExceptSelf(nums, 0, 1, *reversedCurrentProductPtr);
+        return nums;
+    }
+
+private:
+    void GetProductExceptSelf(vector<int>& nums, int index, int currentProduct, int &reversedCurrentProduct)
+    {
+        if (index < nums.size() - 1)
+            GetProductExceptSelf(nums, index + 1, nums[index] * currentProduct, reversedCurrentProduct);
+        if (index == nums.size() - 1)
+        {
+            reversedCurrentProduct = reversedCurrentProduct * nums[index];
+            nums[index] = currentProduct;
+            return;
+        }
+        int currentNumber = nums[index];
+        nums[index] = currentProduct * reversedCurrentProduct;
+        reversedCurrentProduct = reversedCurrentProduct * currentNumber;
+    }
+};
