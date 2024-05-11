@@ -1,0 +1,25 @@
+class Solution
+{
+public:
+    int maxDepth(TreeNode* root) 
+    {
+        treeMaxDepth = 0;
+        GetMaxDepth(root, 1);
+        return treeMaxDepth;
+    }
+private:
+    unsigned int treeMaxDepth;
+    void GetMaxDepth(TreeNode* root, int currentDepth)
+    {
+        if (root == nullptr)
+            return;
+        if (root->left == nullptr && root->right == nullptr)
+        {
+            if (treeMaxDepth < currentDepth)
+                treeMaxDepth = currentDepth;
+            return;
+        }
+        GetMaxDepth(root->left, currentDepth + 1);
+        GetMaxDepth(root->right, currentDepth + 1);
+    }
+};

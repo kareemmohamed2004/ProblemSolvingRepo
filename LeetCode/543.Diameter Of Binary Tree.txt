@@ -1,0 +1,23 @@
+class Solution
+{
+public:
+    unsigned int diameterOfBinaryTree(TreeNode* root)
+    {
+        treeMaxDepth = 0;
+        GetMaxDepthCanBeReachedFromGivenNode(root);
+        return treeMaxDepth;
+    }
+private:
+    unsigned int treeMaxDepth;
+    unsigned int GetMaxDepthCanBeReachedFromGivenNode(TreeNode* node)
+    {
+        if (node == nullptr)
+            return 0;
+        unsigned int maxDepthFromLeft = GetMaxDepthCanBeReachedFromGivenNode(node->left);
+        unsigned int maxDepthFromRight = GetMaxDepthCanBeReachedFromGivenNode(node->right);
+        if (treeMaxDepth < (maxDepthFromLeft + maxDepthFromRight))
+            treeMaxDepth = maxDepthFromLeft + maxDepthFromRight;
+        return max(maxDepthFromLeft, maxDepthFromRight) + 1;
+    }
+    
+};
