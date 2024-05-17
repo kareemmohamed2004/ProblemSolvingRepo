@@ -1,0 +1,32 @@
+#include<unordered_set>
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) 
+    {
+        if(nums.size() == 0)
+            return 0;
+
+        unsigned int longestSeq = 1, currentSeq = 1;
+        long currentNum;
+        unordered_set<long> distinctNums;
+        for(unsigned int i = 0; i < nums.size(); ++i)
+            distinctNums.insert(nums[i]);
+        
+        for(auto itr = distinctNums.begin(); itr != distinctNums.end(); ++itr)
+        {
+             currentNum = *(itr);
+             if(!distinctNums.count(currentNum - 1))
+             {
+                currentSeq = 1;
+                while(distinctNums.count(currentNum + 1))
+                {
+                    ++currentNum;
+                    ++currentSeq;
+                }
+                if(longestSeq < currentSeq)
+                    longestSeq = currentSeq;
+             }
+        }
+        return longestSeq;
+    }
+};

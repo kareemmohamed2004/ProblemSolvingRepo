@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) 
+    {
+        int indexOfBuyDay, indexOfSellDay, maxDiff, currentDiff;
+        maxDiff = 0;
+        indexOfBuyDay = 0;
+        indexOfSellDay = 1;
+        while(indexOfSellDay < prices.size())
+        {
+            currentDiff = prices[indexOfSellDay] - prices[indexOfBuyDay];
+            if(maxDiff < currentDiff)
+              maxDiff = currentDiff;
+
+            if(prices[indexOfBuyDay] <= prices[indexOfSellDay])
+                ++indexOfSellDay;
+            else
+            {
+                indexOfBuyDay = indexOfSellDay;
+                indexOfSellDay = indexOfBuyDay + 1;
+            }
+        }
+        return maxDiff;
+    }
+};

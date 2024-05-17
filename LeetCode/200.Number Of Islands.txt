@@ -1,0 +1,47 @@
+#include<queue>
+class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid)
+    {
+        unsigned int numOfIslands = 0;
+        unsigned short rowsMaxIndex, columnsMaxIndex;
+        pair<unsigned short, unsigned short> indicesOfCurrentOne;
+        vector<vector<bool>> visited;
+        queue<pair<unsigned short, unsigned short>> onesIndices;
+        rowsMaxIndex = grid.size() - 1;
+        columnsMaxIndex = grid[0].size() - 1;
+        for (unsigned short i = 0; i < grid.size(); ++i)
+        {
+            vector<bool> visitedTemp(grid[i].size(), false);
+            visited.push_back(visitedTemp);
+            for (unsigned short j = 0; j < grid[i].size(); ++j)
+            {
+                if (grid[i][j] == '1')
+                    onesIndices.push(make_pair(i, j));
+            }
+        }
+        while (!onesIndices.empty())
+        {
+            indicesOfCurrentOne = onesIndices.front();
+            onesIndices.pop();
+            if (!visited[indicesOfCurrentOne.first][indicesOfCurrentOne.second])
+            {
+                ++numOfIslands;
+                Solve(grid, indicesOfCurrentOne.first, indicesOfCurrentOne.second, rowsMaxIndex, columnsMaxIndex, visited);
+            }
+        }
+        return numOfIslands;
+    }
+private:
+    void Solve(vector<vector<char>>& grid, unsigned short row, unsigned short column, unsigned short& rowsMaxIndex, unsigned short& columnsMaxIndex, vector<vector<bool>>& visited)
+    {
+        if ((row < 0) || (column < 0) || (rowsMaxIndex < row) || (columnsMaxIndex < column) || (grid[row][column] == '0') || (visited[row][column] == true))
+            return;
+
+        visited[row][column] = true;
+        Solve(grid, row, column + 1, rowsMaxIndex, columnsMaxIndex, visited);
+        Solve(grid, row + 1, column, rowsMaxIndex, columnsMaxIndex, visited);
+        Solve(grid, row, column - 1, rowsMaxIndex, columnsMaxIndex, visited);
+        Solve(grid, row - 1, column, rowsMaxIndex, columnsMaxIndex, visited);
+    }
+};

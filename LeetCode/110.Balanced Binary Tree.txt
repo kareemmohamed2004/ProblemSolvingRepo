@@ -1,0 +1,35 @@
+class Solution {
+public:
+    bool isBalanced(TreeNode* root) 
+    {
+        if(root == nullptr)
+            return true;
+        
+        int result = GetDepth(root);
+        if(result < 0)
+            return false;
+        else
+            return true;
+    }
+private:
+    int GetDepth(TreeNode* node)
+    {
+        if(node == nullptr)
+            return 0;
+
+        int leftDepth = GetDepth(node->left);
+        if(leftDepth == -1)
+            return -1;
+
+        int rightDepth = GetDepth(node->right);
+        if(rightDepth == -1)
+            return -1;
+
+        int maxDepth = max(leftDepth, rightDepth);
+        int minDepth = min(leftDepth, rightDepth);
+        if(1 < (maxDepth - minDepth))
+            return -1;
+        else
+            return maxDepth + 1;
+    }
+};
