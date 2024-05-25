@@ -1,0 +1,22 @@
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) 
+    {
+        vector<int> subsets;
+        FillSubsets(nums, 0, subsets);
+        return finalResult;
+    }
+private:
+    vector<vector<int>> finalResult;
+    void FillSubsets(vector<int> &nums, int index, vector<int> currentSubset)
+    {
+        if(index == nums.size())
+        {
+            finalResult.push_back(currentSubset);
+            return;
+        }
+        FillSubsets(nums, index + 1, currentSubset);
+        currentSubset.push_back(nums[index]);
+        FillSubsets(nums, index + 1, currentSubset);
+    }
+};

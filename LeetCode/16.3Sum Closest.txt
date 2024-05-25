@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) 
+    {
+       unsigned int minDiff = 10000000, currentDiff;
+       unsigned short secondNumberIndex, thirdNumberIndex;
+       int result, currentSum;
+       sort(nums.begin(), nums.end());
+       for(unsigned short firstNumberindex = 0; firstNumberindex < nums.size() - 2; ++firstNumberindex)
+       {
+            if((0 < firstNumberindex) && (nums[firstNumberindex - 1] == nums[firstNumberindex]))
+                continue;
+
+            secondNumberIndex = firstNumberindex + 1;
+            thirdNumberIndex = nums.size() - 1;
+            while(secondNumberIndex < thirdNumberIndex)
+            {
+                currentSum = nums[firstNumberindex] + nums[secondNumberIndex] + nums[thirdNumberIndex];
+                currentDiff = abs(target - currentSum);
+                if(currentDiff < minDiff)
+                {
+                    minDiff = currentDiff;
+                    result = nums[firstNumberindex] + nums[secondNumberIndex] + nums[thirdNumberIndex];
+                }
+                if(currentSum <= target)
+                    ++secondNumberIndex;
+                else
+                    --thirdNumberIndex;
+            }
+       }
+       return result;
+    }
+};

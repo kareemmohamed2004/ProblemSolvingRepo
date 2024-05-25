@@ -1,0 +1,39 @@
+#include<algorithm>
+#include <string>
+class Solution 
+{
+public:
+    vector<vector<int>> threeSum(vector<int>& nums)
+    {
+        vector<vector<int>> finalResult;
+        unordered_set<string> triplets;
+        int thirdNumber;
+        sort(nums.begin(), nums.end());
+        for (unsigned short firstNumberIndex = 0; firstNumberIndex < nums.size() - 2; ++firstNumberIndex)
+        {
+            if (0 < firstNumberIndex && nums[firstNumberIndex - 1] == nums[firstNumberIndex])
+                continue;
+            for (unsigned short secondNumberIndex = firstNumberIndex + 1; secondNumberIndex < nums.size() - 1; ++secondNumberIndex)
+            {
+                if (firstNumberIndex + 1 < secondNumberIndex && nums[secondNumberIndex - 1] == nums[secondNumberIndex])
+                    continue;
+                thirdNumber = 0 - nums[firstNumberIndex] - nums[secondNumberIndex];
+                vector<int>::iterator itr = lower_bound(nums.begin() + secondNumberIndex + 1, nums.end(), thirdNumber);
+                if (itr != nums.end() && *(itr) == thirdNumber)
+                {
+                    vector<int> triplet;
+                    triplet.push_back(nums[firstNumberIndex]);
+                    triplet.push_back(nums[secondNumberIndex]);
+                    triplet.push_back(thirdNumber);
+                    string currentTriplet = to_string(nums[firstNumberIndex]) + "," + to_string(nums[secondNumberIndex]) + "," + to_string(thirdNumber);
+                    if (!triplets.count(currentTriplet))
+                    {
+                        finalResult.push_back(triplet);
+                        triplets.insert(currentTriplet);
+                    }
+                }
+            }
+        }
+        return finalResult;
+    }
+};

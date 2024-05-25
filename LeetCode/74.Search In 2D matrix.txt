@@ -1,0 +1,42 @@
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) 
+    {
+        int mostSuspictableRow = GetTheMostSuspictableRow(matrix, target);
+        if(mostSuspictableRow == -1)
+            return false;
+        else
+            return *(lower_bound(matrix[mostSuspictableRow].begin(), matrix[mostSuspictableRow].end(), target)) == target;
+    }
+private:
+    int GetTheMostSuspictableRow(vector<vector<int>>& matrix, int target)
+    {
+        int startRowIndex = 0, endRowIndex = matrix.size() - 1, maxColumnIndex = matrix[0].size() - 1, mid;
+        do
+        {
+            if(matrix[startRowIndex][0] <= target && target <= matrix[startRowIndex][maxColumnIndex])
+                return startRowIndex;
+
+            if(matrix[endRowIndex][0] <= target && target <= matrix[endRowIndex][maxColumnIndex])
+                return endRowIndex;
+            
+            mid = (startRowIndex + endRowIndex) / 2;
+            if(matrix[mid][0] <= target && target <= matrix[mid][maxColumnIndex])
+                return mid;
+            
+            if(target < matrix[mid][maxColumnIndex])
+                endRowIndex = mid - 1;
+            else
+                startRowIndex = mid + 1;
+
+        }while(startRowIndex < endRowIndex);
+
+        if(startRowIndex < matrix.size() && matrix[startRowIndex][0] <= target && target <= matrix[startRowIndex][maxColumnIndex])
+            return startRowIndex;
+
+        if(0 <= endRowIndex && matrix[endRowIndex][0] <= target && target <= matrix[endRowIndex][maxColumnIndex])
+            return endRowIndex;
+        else
+            return -1;
+    }
+};

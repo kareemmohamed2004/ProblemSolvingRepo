@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int subsetXORSum(vector<int>& nums)
+    {
+        int curretXORSum, totalXORSum = 0;
+        for (int i = 0; i < (1 << nums.size()); i++)
+        {
+            curretXORSum = 0;
+            for (int j = 0; j < nums.size(); j++)
+            {
+                if (GetBit(i, j))
+                    curretXORSum = curretXORSum ^ nums[j];
+            }
+            totalXORSum += curretXORSum;
+        }
+        return totalXORSum;
+    }
+private:
+    unsigned long long SetBit(long number, unsigned long long index)
+    {
+        unsigned long long mask = (unsigned long long)1 << index;
+        return mask | number;
+    }
+
+    unsigned long long GetBit(long number, unsigned long long index)
+    {
+        unsigned long long mask = (unsigned long long)1 << index;
+        return mask & number;
+    }
+
+    unsigned long long ClearBit(long number, unsigned long long index)
+    {
+        unsigned long long mask = (unsigned long long)1 << index;
+        return ~mask & number;
+    }
+
+    unsigned long long ToggleBit(long number, unsigned long long index)
+    {
+        unsigned long long mask = (unsigned long long)1 << index;
+        return mask ^ number;
+    }
+};

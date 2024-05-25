@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int mySqrt(int x)
+    {
+        if (x == 0)
+            return 0;
+        if (x <= 3)
+            return 1;
+        else
+            return GetSqrt(x);
+    }
+private:
+    unsigned int GetSqrt(unsigned int num)
+    {
+        return SQRT(2, num / 2, num);
+    }
+    unsigned int SQRT(unsigned long long start, unsigned long long end, unsigned long long num)
+    {
+        if (end <= start)
+        {
+            unsigned long long MAX = max(start, end);
+            if (MAX * MAX <= num)
+                return MAX;
+
+            unsigned long long MIN = min(start, end);
+            if (MIN * MIN <= num)
+                return MIN;
+            else
+                return MIN - 1;
+        }
+
+        if (start * start == num)
+            return start;
+        if (end * end == num)
+            return end;
+
+        unsigned long long mid = (start + end) / 2;
+        if (mid * mid == num)
+            return mid;
+
+        if (mid * mid < num)
+            return SQRT(mid + 1, end, num);
+        else
+            return SQRT(start, mid - 1, num);
+    }
+};
