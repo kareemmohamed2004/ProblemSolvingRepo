@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int minPathSum(vector<vector<int>>& grid)
+    {
+        unsigned int rowsCount = grid.size(), columnsCount = grid[0].size();
+        vector<vector<int>> memory;
+        for (unsigned int i = 0; i < rowsCount; ++i)
+        {
+            vector<int> row(columnsCount, -1);
+            memory.push_back(row);
+        }
+        return GetMinPathSum(grid, memory, 0, 0);
+    }
+private:
+    unsigned int GetMinPathSum(vector<vector<int>>& grid, vector<vector<int>>& memory, unsigned int row, unsigned int column)
+    {
+        if (grid.size() <= row || grid[0].size() <= column)
+            return 1000000;
+        if (memory[row][column] != -1)
+            return memory[row][column];
+        if (row == grid.size() - 1 && column == grid[0].size() - 1)
+        {
+            memory[row][column] = grid[row][column];
+            return memory[row][column];
+        }
+        unsigned int firstOption = grid[row][column] + GetMinPathSum(grid, memory, row, column + 1);
+        unsigned int secondOption = grid[row][column] + GetMinPathSum(grid, memory, row + 1, column);
+        memory[row][column] = min(firstOption, secondOption);
+        return memory[row][column];
+    }
+};
