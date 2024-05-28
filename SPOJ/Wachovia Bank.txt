@@ -1,0 +1,56 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+class Solution {
+public:
+    int Solve(int itemsCount, int totalWeight, vector<int>& itemsValues, vector<int>& itemsWeights)
+    {
+        vector<vector<int>> memory;
+        for (int i = 0; i < itemsCount; i++)
+        {
+            vector<int> itemWeights(1000, -1);
+            memory.push_back(itemWeights);
+        }
+        return GetMaxValue(itemsCount, totalWeight, itemsValues, itemsWeights, memory);
+    }
+private:
+    int GetMaxValue(int currentRemainingItems, int currentRemainingWeight, vector<int>& itemsValues, vector<int>& itemsWeights, vector<vector<int>>& memory)
+    {
+        if (currentRemainingWeight < 1 || currentRemainingItems < 1)
+            return 0;
+        if (memory[currentRemainingItems - 1][currentRemainingWeight - 1] != -1)
+            return memory[currentRemainingItems - 1][currentRemainingWeight - 1];
+
+        int firstOption;
+        if (currentRemainingWeight < itemsWeights[currentRemainingItems - 1])
+            firstOption = 0;
+        else
+            firstOption = itemsValues[currentRemainingItems - 1] + GetMaxValue(currentRemainingItems - 1, currentRemainingWeight - itemsWeights[currentRemainingItems - 1], itemsValues, itemsWeights, memory);
+        int secondOption = GetMaxValue(currentRemainingItems - 1, currentRemainingWeight, itemsValues, itemsWeights, memory);
+        memory[currentRemainingItems - 1][currentRemainingWeight - 1] = max(firstOption, secondOption);
+        return memory[currentRemainingItems - 1][currentRemainingWeight - 1];
+    }
+};
+int main()
+{
+    Solution s;
+    vector<int> itemsWeights;
+    vector<int> itemsValues;
+    int itemsCount, target = 0, totalWeight, itemWeight, itemValue, instancesCount;
+    cin >> instancesCount;
+    for (int k = 0; k < instancesCount; k++)
+    {
+        cin >> totalWeight >> itemsCount;
+        for (int i = 0; i < itemsCount; i++)
+        {
+            cin >> itemWeight >> itemValue;
+            itemsWeights.push_back(itemWeight);
+            itemsValues.push_back(itemValue);
+        }
+        cout << "Hey stupid robber, you can get " << s.Solve(itemsCount, totalWeight, itemsValues, itemsWeights) << ".\n";
+        itemsWeights.clear();
+        itemsValues.clear();
+    }
+    return 0;
+}

@@ -1,0 +1,45 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+class Solution {
+public:
+    unsigned long long Solve(vector<unsigned long long>& itemsValues)
+    {
+        vector<unsigned long long> memory(itemsValues.size(), -1);
+        return GetMaxValue(itemsValues, 0, memory);
+    }
+private:
+    unsigned long long GetMaxValue(vector<unsigned long long>& itemsValues, unsigned long long currentIndex, vector<unsigned long long>& memory)
+    {
+        if (itemsValues.size() <= currentIndex)
+            return 0;
+        if (memory[currentIndex]!= -1)
+            return memory[currentIndex];
+
+        unsigned long long firstOption = itemsValues[currentIndex] + GetMaxValue(itemsValues, currentIndex + 2, memory);
+        unsigned long long secondOption = GetMaxValue(itemsValues, currentIndex + 1, memory);
+        memory[currentIndex] = max(firstOption, secondOption);
+        return memory[currentIndex];
+    }
+};
+int main()
+{
+    Solution s;
+    vector<unsigned long long> itemsWeights;
+    vector<unsigned long long> itemsValues;
+    unsigned long long itemsCount, target = 0, totalWeight, itemWeight, itemValue, instancesCount;
+    cin >> instancesCount;
+    for (unsigned long long k = 0; k < instancesCount; k++)
+    {
+        cin >> itemsCount;
+        for (unsigned long long i = 0; i < itemsCount; i++)
+        {
+            cin >> itemValue;
+            itemsValues.push_back(itemValue);
+        }
+        cout << "Case "<<k+1<<": " << s.Solve(itemsValues) << "\n";
+        itemsValues.clear();
+    }
+    return 0;
+}

@@ -1,0 +1,72 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+class Solution {
+public:
+    int Solve(vector<unsigned int>& itemsValues)
+    {
+        coinsSum = 0;
+        for (unsigned int i = 0; i < itemsValues.size(); i++)
+            coinsSum += itemsValues[i];
+
+        vector<vector<int>> memory = Create2DVector(itemsValues.size(), 50001);       
+        return GetMinimumDifference(itemsValues.size() - 1, 0, itemsValues, memory);
+    }
+private:
+    unsigned int coinsSum;
+    vector<vector<int>> Create2DVector(unsigned int itemsCount, unsigned int firstPersonMaxSum)
+    {
+        vector<vector<int>> memory;
+        for (unsigned int i = 0; i < itemsCount; i++)
+        {
+            if (i == 0)
+            {
+                vector<int> firstPersonsTotalCoins(1, -1);
+                memory.push_back(firstPersonsTotalCoins);
+            }
+            else
+            {
+                vector<int> firstPersonsTotalCoins(firstPersonMaxSum, -1);
+                memory.push_back(firstPersonsTotalCoins);
+            }
+        }
+        return memory;
+    }
+
+    unsigned int GetMinimumDifference(unsigned int itemsCount, unsigned int firstPersonTotal, vector<unsigned int>& itemsValues, vector<vector<int>>& memory)
+    {
+        if (itemsCount < 1)
+            return abs((int)(firstPersonTotal - (coinsSum - firstPersonTotal)));
+
+        if (memory[itemsCount][firstPersonTotal] != -1)
+            return memory[itemsCount][firstPersonTotal];
+
+        unsigned int differenceWhenFirstPersonTakeTheItem = GetMinimumDifference(itemsCount - 1, firstPersonTotal + itemsValues[itemsCount], itemsValues, memory);
+        unsigned int differenceWhenSecondPersonTakeTheItem = GetMinimumDifference(itemsCount - 1, firstPersonTotal, itemsValues, memory);
+
+        memory[itemsCount][firstPersonTotal] = min(differenceWhenFirstPersonTakeTheItem, differenceWhenSecondPersonTakeTheItem);
+        return memory[itemsCount][firstPersonTotal];
+    }
+};
+int main()
+{
+    Solution s;
+    vector<unsigned int> itemsValues;
+    int itemsCount, target = 0, totalWeight, itemWeight, itemValue, problemsCount;
+    cin >> problemsCount;
+    for (int i = 0; i < problemsCount; i++)
+    {
+        cin >> itemsCount;
+        itemsValues.push_back(0);
+        for (int i = 0; i < itemsCount; i++)
+        {
+            cin >> itemValue;
+            itemsValues.push_back(itemValue);
+        }
+        cout << s.Solve(itemsValues) << "\n";
+        itemsValues.clear();
+    }
+    
+    return 0;
+}
