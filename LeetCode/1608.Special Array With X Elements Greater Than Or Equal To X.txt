@@ -1,0 +1,19 @@
+class Solution {
+public:
+    int specialArray(vector<int>& nums)
+    {
+        int result = -1, currentNumberIndex = 0, currentNumber = 0, lowerBoundIndex;
+        sort(nums.begin(), nums.end());
+        while (result == -1 && currentNumber <= nums[nums.size() - 1])
+        {
+            vector<int>::iterator itr = lower_bound(nums.begin(), nums.end(), currentNumber);
+            lowerBoundIndex = itr - nums.begin();
+            if (currentNumber == nums.size() - lowerBoundIndex)
+                result = currentNumber;
+
+            ++currentNumber;
+            ++currentNumberIndex;
+        }
+        return result;
+    }
+};
