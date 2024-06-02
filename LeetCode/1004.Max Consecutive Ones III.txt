@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int longestOnes(vector<int>& nums, int k)
+    {
+        int startIndex = 0, endIndex = 0, MaxSeq = 0, currentSeqLength = 0, countOfZerosInsideWindow = 0;
+        while (endIndex < nums.size())
+        {
+            if (!nums[endIndex])
+            {
+                if (countOfZerosInsideWindow < k)
+                    ++countOfZerosInsideWindow;
+                else
+                {
+                    while (startIndex < nums.size() && nums[startIndex])
+                        ++startIndex;
+
+                    if (startIndex >= nums.size())
+                        break;
+
+                    if (k)
+                        ++startIndex;
+                    else
+                    {
+                        while (startIndex < nums.size() && !nums[startIndex])
+                            ++startIndex;
+
+                        if (startIndex >= nums.size())
+                            break;
+
+                        endIndex = startIndex;
+                        countOfZerosInsideWindow = 0;
+                    }
+                }
+            }
+            currentSeqLength = endIndex - startIndex + 1;
+            if (MaxSeq < currentSeqLength)
+                MaxSeq = currentSeqLength;
+            ++endIndex;
+        }
+        return MaxSeq;
+    }
+};
