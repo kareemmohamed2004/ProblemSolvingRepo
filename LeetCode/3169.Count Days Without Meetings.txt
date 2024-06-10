@@ -1,0 +1,34 @@
+#include<algorithm>
+
+bool Comparer(const vector<int>& a, const vector<int>& b)
+{
+    if(a[0] != b[0])
+        return a[0] < b[0];
+    else
+        return a[1] < b[1];
+}
+
+class Solution
+{
+public:
+    int countDays(int days, vector<vector<int>>& meetings) 
+    {
+        int remainingDays = 0;
+        vector<int> currentMeeting, nextMeeting;
+        sort(meetings.begin(), meetings.end(), Comparer);
+        currentMeeting = meetings[0];
+        for(int i = 1; i < meetings.size(); ++i)
+        {
+            nextMeeting = meetings[i];
+            if(currentMeeting[1] < nextMeeting[0])
+            {
+                remainingDays += nextMeeting[0] - currentMeeting[1] - 1;
+                currentMeeting[0] = nextMeeting[0];
+                currentMeeting[1] = nextMeeting[1];
+            }
+            else
+                currentMeeting[1] = currentMeeting[1] >= nextMeeting[1] ? currentMeeting[1] : nextMeeting[1];
+        }
+        return remainingDays + (meetings[0][0] - 1) + (days - currentMeeting[1]);
+    }
+};
