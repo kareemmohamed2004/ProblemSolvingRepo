@@ -1,0 +1,32 @@
+class Solution {
+public:
+    vector<vector<int>> permute(vector<int>& nums)
+    {
+        vector<vector<int>> permutations;
+        vector<int> permutation;
+        vector<bool> visited(21, 0);
+        AddPermutations(nums, permutation, visited, permutations);
+        return permutations;
+    }
+private:
+    void AddPermutations(vector<int>& nums, vector<int>& permutation, vector<bool>& visited, vector<vector<int>>& permutations
+    )
+    {
+        if (permutation.size() == nums.size())
+            permutations.push_back(permutation);
+        else
+        {
+            for (int i = 0; i < nums.size(); ++i)
+            {
+                if (!visited[nums[i] + 10])
+                {
+                    permutation.push_back(nums[i]);
+                    visited[nums[i] + 10] = true;
+                    AddPermutations(nums, permutation, visited, permutations);
+                    visited[nums[i] + 10] = false;
+                    permutation.pop_back();
+                }
+            }
+        }
+    }
+};
