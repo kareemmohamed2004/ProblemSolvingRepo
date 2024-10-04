@@ -1,0 +1,34 @@
+#include <iostream>
+#include<cmath>
+
+using namespace std;
+
+double PowerCalculation(double base,int Power);
+void GeometryTest(unsigned int Radius,unsigned int Side);
+
+
+int main()
+{
+    unsigned int R,S;
+    cin>>R>>S;
+    GeometryTest(R,S);
+
+    return 0;
+}
+
+double PowerCalculation(double base,int Power)
+{
+    if(!Power)
+        return 1;
+    return base*PowerCalculation(base,Power-1);
+}
+
+void GeometryTest(unsigned int Radius,unsigned int Side)
+{
+    if((Radius*2)<=Side)
+        cout<<"Square\n";
+    else if(sqrt(2*PowerCalculation(Side/2.0,2))<=Radius)
+        cout<<"Circle\n";
+    else
+        cout<<"Complex\n";
+}

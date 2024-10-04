@@ -1,0 +1,50 @@
+#include<stdlib.h>
+#include<stdio.h>
+#include<iostream>
+
+using namespace std;
+
+void IsExist(unsigned int NumberOfRows, unsigned int NumberOfColumns, unsigned int** Matrix,unsigned int Target);
+
+int main()
+{
+	unsigned int** matrix;
+	unsigned int rows, columns, target;
+
+
+	cin >> rows >> columns;
+	matrix = (unsigned int**)malloc(rows * sizeof(unsigned int*));
+	for (unsigned int i = 0; i < rows; ++i)
+		matrix[i] = (unsigned int*)malloc(columns * sizeof(unsigned int));
+
+	for (unsigned int i = 0; i < rows; ++i)
+	{
+		for (unsigned int j = 0; j < columns; j++)
+		{
+			cin >> matrix[i][j];
+		}
+	}
+
+	cin >> target;
+
+
+	IsExist(rows,columns,matrix, target);
+	return 0;
+}
+
+void IsExist(unsigned int NumberOfRows, unsigned int NumberOfColumns, unsigned int** Matrix,unsigned int Target)
+{
+	for (unsigned int i = 0; i < NumberOfRows; ++i)
+	{
+		for (unsigned int j = 0; j < NumberOfColumns; j++)
+		{
+			if (Matrix[i][j]==Target)
+			{
+				cout << "will not take number";
+				return;
+			}
+		}
+	}
+
+	cout << "will take number";
+}

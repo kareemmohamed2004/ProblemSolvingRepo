@@ -1,0 +1,51 @@
+#include <iostream>
+#include<vector>
+#include <unordered_map>
+using namespace std;
+
+int main()
+{
+    unsigned int NumberOfGroups,NumberOfTaxis;
+    unsigned int GroupsFrequency[5] = { 0 }, Temp, RemainderOfTwo,RemainderOfOne;
+    NumberOfTaxis = 0;
+    RemainderOfOne = 0;
+    RemainderOfTwo = 0;
+    cin >> NumberOfGroups;
+    for (unsigned int i = 0; i < NumberOfGroups; i++)
+    {
+        cin >> Temp;
+        ++GroupsFrequency[Temp];
+    }
+
+    NumberOfTaxis += GroupsFrequency[4] + GroupsFrequency[3];
+    if (GroupsFrequency[3] && GroupsFrequency[1])
+    {
+        if (GroupsFrequency[1] <= GroupsFrequency[3])
+            GroupsFrequency[1] = 0;
+        else
+            GroupsFrequency[1] -= GroupsFrequency[3];
+    }
+
+    if (GroupsFrequency[2])
+    {
+        NumberOfTaxis += GroupsFrequency[2] / 2;
+        RemainderOfTwo += GroupsFrequency[2] % 2;
+    }
+
+    if (GroupsFrequency[1])
+    {
+        NumberOfTaxis += GroupsFrequency[1] / 4;
+        RemainderOfOne += GroupsFrequency[1] % 4;
+    }
+
+    if (RemainderOfOne || RemainderOfTwo)
+    {
+        if ((RemainderOfOne == 3) && RemainderOfTwo)
+            NumberOfTaxis += 2;
+        else
+            ++NumberOfTaxis;
+    }
+    cout << NumberOfTaxis << endl;
+
+    return 0;
+}

@@ -1,0 +1,42 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<iostream>
+
+using namespace std;
+
+void CountIncreasingSubarrays(int* arr);
+
+int main()
+{
+	int* arr=new int();
+	unsigned int NumberOfTestCases;
+	cin >> NumberOfTestCases;
+	for (unsigned int i = 0; i < NumberOfTestCases; ++i)
+	{
+		CountIncreasingSubarrays(arr);
+	}
+
+	return 0;
+}
+
+void CountIncreasingSubarrays(int* arr)
+{
+	unsigned int Size,Counter=1,NumberOfIncreasingSubarrays=0;
+	cin >> Size;
+	arr = (int*)malloc(Size * sizeof(int));
+	cin >> arr[0];
+	for (unsigned int j = 1; j < Size; ++j)
+	{
+		cin >> arr[j];
+		if (arr[j - 1] <= arr[j])
+			++Counter;
+		else
+		{
+			NumberOfIncreasingSubarrays += (Counter * (Counter + 1)) / 2;
+			Counter = 1;
+		}
+	}
+
+	NumberOfIncreasingSubarrays += (Counter * (Counter + 1)) / 2;
+	cout << NumberOfIncreasingSubarrays<<"\n";
+}

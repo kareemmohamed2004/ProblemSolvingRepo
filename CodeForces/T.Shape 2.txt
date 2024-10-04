@@ -1,0 +1,36 @@
+#include <iostream>
+
+using namespace std;
+
+void DrawPyramid(unsigned int NumberOfRows);
+
+int main()
+{
+	unsigned int Rows;
+	cin >> Rows;
+	DrawPyramid(Rows);
+
+    return 0;
+}
+
+void DrawPyramid(unsigned int NumberOfRows)
+{
+	unsigned int NumberOfStarsInRow = 1, NumberOfSpaces = NumberOfRows - 1;
+	int i;
+
+	while (NumberOfRows > 0)
+	{
+		for (i = 0; i < NumberOfSpaces; ++i)
+			cout << ' ';
+
+		for (i = 0; i < NumberOfStarsInRow; ++i)
+			cout << '*';
+
+		if (NumberOfRows - 1 > 0)
+			cout << "\n";
+
+		--NumberOfSpaces;
+		--NumberOfRows;
+		NumberOfStarsInRow += 2;
+	}
+}

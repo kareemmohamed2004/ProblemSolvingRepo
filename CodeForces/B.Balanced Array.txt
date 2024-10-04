@@ -1,0 +1,74 @@
+#include <iostream>
+#include <unordered_map>
+using namespace std;
+
+int main()
+{
+    unsigned int NumberOfTestCases, NumberOfArrayElements, EvenIndex;
+    cin >> NumberOfTestCases;
+    unsigned int* Arr;
+    unsigned int FirstOddValue, Temp;
+    for (int T = 0; T < NumberOfTestCases; T++)
+    {
+        cin >> NumberOfArrayElements;
+        if (NumberOfArrayElements % 4 != 0)
+        {
+            cout << "No" << endl;
+            continue;
+        }
+        
+        Arr = new unsigned int[NumberOfArrayElements];
+        unordered_map<unsigned int, bool> OddNumbersMap;
+
+        for (int i = 0; i < (NumberOfArrayElements / 2); i++)
+            Arr[i] = (i * 2) + 2;
+        
+        FirstOddValue = 1;
+        EvenIndex = 0;
+        for (int k = (NumberOfArrayElements / 2); k < NumberOfArrayElements; k += 2)
+        {
+            if (!OddNumbersMap[FirstOddValue])
+            {
+                OddNumbersMap[FirstOddValue] = true;
+                Arr[k] = FirstOddValue;
+            }
+            else
+            {
+                do
+                {
+                    FirstOddValue += 2;
+                } while (OddNumbersMap[FirstOddValue]);
+                OddNumbersMap[FirstOddValue] = true;
+                Arr[k] = FirstOddValue;
+            }
+            
+            Temp = (Arr[EvenIndex] + Arr[EvenIndex + 1]) - Arr[k];
+            if (!OddNumbersMap[Temp])
+            {
+                OddNumbersMap[Temp] = true;
+                Arr[k + 1] = Temp;
+            }
+            else
+            {
+                do
+                {
+                    Temp += 2;
+                } while (OddNumbersMap[Temp]);
+                OddNumbersMap[Temp] = true;
+                Arr[k + 1] = Temp;
+            }
+            FirstOddValue += 2;
+            EvenIndex += 2;
+        }
+        cout << "YES" << endl;
+        for (int k = 0; k < NumberOfArrayElements; k++)
+        {
+            cout << Arr[k];
+            if (k + 1 != NumberOfArrayElements)
+                cout << " ";
+        }
+        cout << endl;
+        delete[]Arr;
+    }
+    return 0;
+}

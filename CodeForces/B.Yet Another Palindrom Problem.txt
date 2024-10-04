@@ -1,0 +1,67 @@
+#include <iostream>
+#include<vector>
+#include <unordered_map>
+using namespace std;
+
+int main()
+{
+    unsigned short NumberOfTestCases, ArrayLength, Temp, MaxOccurence;
+    unsigned short *Numbers;
+    vector<pair<unsigned short, unsigned short>> FrequencyArray;
+    bool IsPalindrom;
+
+    for (unsigned short v = 0; v < 5001; v++)
+        FrequencyArray.push_back(make_pair(0, 0));
+    
+    cin >> NumberOfTestCases;
+    
+    for (unsigned short t = 0; t < NumberOfTestCases; t++)
+    {
+        IsPalindrom = false;
+        MaxOccurence = 0;
+        cin >> ArrayLength;
+        Numbers = new unsigned short[ArrayLength] {0};
+        for (unsigned short i = 0; i < ArrayLength; i++)
+        {
+            cin >> Temp;
+            Numbers[i] = Temp;
+            if (!FrequencyArray[Temp].first)
+                FrequencyArray[Temp].second = i;
+
+            ++FrequencyArray[Temp].first;
+            if (MaxOccurence < FrequencyArray[Temp].first)
+                MaxOccurence = FrequencyArray[Temp].first;
+        }
+
+        if (2 < MaxOccurence)
+            cout << "YES" << endl;
+        else
+        {
+            for (unsigned short i = 0; i < FrequencyArray.size(); i++)
+            {
+                if (FrequencyArray[i].first == 2)
+                {
+                    if (Numbers[FrequencyArray[i].second] == Numbers[FrequencyArray[i].second + 1])
+                        continue;
+                    else
+                    {
+                        cout << "YES" << endl;
+                        IsPalindrom = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!IsPalindrom)
+                cout << "NO" << endl;
+        }
+
+        for (unsigned short i = 0; i < 5001; i++)
+        {
+            FrequencyArray[i].first = 0;
+            FrequencyArray[i].second = 0;
+        }
+        delete[] Numbers;
+    }
+    return 0;
+}

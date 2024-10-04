@@ -1,0 +1,51 @@
+#include<stdlib.h>
+#include<stdio.h>
+#include<iostream>
+
+using namespace std;
+
+void IsPermutation(unsigned int NumberOfElements, int* ArrayA, int* ArrayB);
+
+int main()
+{
+	unsigned int numberofelements;
+	int* arrayA;
+	int* arrayB;
+
+	cin >> numberofelements;
+
+	arrayA = (int*)malloc(numberofelements * sizeof(int));
+	arrayB = (int*)malloc(numberofelements * sizeof(int));
+
+	for (unsigned int i = 0;i < numberofelements; ++i)
+		cin >> arrayA[i];
+
+	for (unsigned int i = 0; i < numberofelements; ++i)
+		cin >> arrayB[i];
+
+	IsPermutation(numberofelements, arrayA, arrayB);
+
+	return 0;
+}
+
+void IsPermutation(unsigned int NumberOfElements, int* ArrayA, int* ArrayB)
+{
+	unsigned int counter = 0;
+	for (unsigned int i = 0; i < NumberOfElements; i++)
+	{
+		for (unsigned int j = 0; j < NumberOfElements; j++)
+		{
+			if (ArrayB[i] == ArrayA[j])
+			{
+				ArrayA[j] = -1;
+				++counter;
+				break;
+			}
+		}
+	}
+	
+	if (counter == NumberOfElements)
+		cout << "yes";
+	else
+		cout << "no";
+}

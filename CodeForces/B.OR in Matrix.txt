@@ -1,0 +1,111 @@
+#include <iostream>
+#include<vector>
+#include <unordered_map>
+using namespace std;
+
+int main()
+{
+    unsigned short NumberOfRows, NumberOfColumns, Temp, FullZeroRow, FullZeroColumn, CountOfZeros, CountOfOnes;
+    bool* RowsOfZeros, * ColumnsOfZeros;
+    vector<pair<unsigned short, unsigned short>> OnesVector;
+    cin >> NumberOfRows >> NumberOfColumns;
+
+    RowsOfZeros = new bool[NumberOfRows];
+    ColumnsOfZeros = new bool[NumberOfColumns];
+    FullZeroRow = 0;
+    FullZeroColumn = 0;
+    CountOfZeros = 0;
+    CountOfOnes = 0;
+
+    for (unsigned short i = 0; i < NumberOfRows; i++)
+        RowsOfZeros[i] = false;
+
+    for (unsigned short i = 0; i < NumberOfColumns; i++)
+        ColumnsOfZeros[i] = false;
+
+
+    for (unsigned short Row = 0; Row < NumberOfRows; Row++)
+    {
+        for (unsigned short Column = 0; Column < NumberOfColumns; Column++)
+        {
+            cin >> Temp;
+            if (Temp == 0)
+            {
+                ++CountOfZeros;
+                if (!RowsOfZeros[Row])
+                {
+                    RowsOfZeros[Row] = true;
+                    ++FullZeroRow;
+                }
+                if (!ColumnsOfZeros[Column])
+                {
+                    ColumnsOfZeros[Column] = true;
+                    ++FullZeroColumn;
+                }
+            }
+            else
+            {
+                ++CountOfOnes;
+                OnesVector.push_back(make_pair(Row, Column));
+            }
+        }
+    }
+
+    Temp = 3;
+    if (CountOfZeros == (NumberOfRows * NumberOfColumns))
+        Temp = 0;
+    if (CountOfOnes == (NumberOfRows * NumberOfColumns))
+        Temp = 1;
+
+    if (Temp != 3)
+    {
+        cout << "YES" << endl;
+        for (unsigned short i = 0; i < NumberOfRows; i++)
+        {
+            for (unsigned short j = 0; j < NumberOfColumns; j++)
+            {
+                cout << Temp;
+                if (j + 1 < NumberOfColumns)
+                    cout << " ";
+            }
+            cout << endl;
+        }
+        return 0;
+    }
+
+    if ((FullZeroRow == NumberOfRows) || (FullZeroColumn == NumberOfColumns))
+    {
+        cout << "NO" << endl;
+        return 0;
+    }
+
+    for (unsigned short i = 0; i < OnesVector.size(); i++)
+    {
+        if (RowsOfZeros[OnesVector[i].first] && ColumnsOfZeros[OnesVector[i].second])
+        {
+            cout << "NO" << endl;
+            return 0;
+        }
+    }
+
+    cout << "YES" << endl;
+    for (unsigned short Row = 0; Row < NumberOfRows; Row++)
+    {
+        for (unsigned short Column = 0; Column < NumberOfColumns; Column++)
+        {
+            if (RowsOfZeros[Row])
+                cout << 0;
+            else
+            {
+                if (ColumnsOfZeros[Column])
+                    cout << 0;
+                else
+                    cout << 1;
+            }
+            if (Column + 1 < NumberOfColumns)
+                cout << " ";
+        }
+        cout << endl;
+    }
+    return 0;
+}

@@ -1,0 +1,27 @@
+#include<iostream>
+#include<vector>
+#include<unordered_map>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+using namespace std;
+
+int main()
+{
+    string x;
+    unsigned short Temp;
+    cin >> x;
+    for (unsigned long long i = 0; i < x.size(); i++)
+    {
+        if ('4' < x[i])
+        {
+            Temp = 9 - (x[i] - 48);
+            if (Temp == 0 && i == 0)
+                continue;
+            x[i] = Temp + 48;
+        }
+    }
+    cout << x << '\n';
+    return 0;
+}

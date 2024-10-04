@@ -1,0 +1,64 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<iostream>
+
+using namespace std;
+
+int diag_diff(int rows, int columns, int **arr);
+
+int main()
+{
+	int row, column, i, j;
+
+	cin >> row;
+	column = row;
+
+	int** arr = (int**)malloc(row * sizeof(int*));
+	for (i = 0; i < row; ++i)
+		arr[i] = (int*)malloc(column * sizeof(int));
+
+	for (i = 0; i < row; i++)
+	{
+		for (j = 0; j < column; j++)
+		{
+			cin >> arr[i][j];
+		}
+	}
+
+	cout << diag_diff(row, column, arr);
+
+	return 0;
+}
+
+int diag_diff(int rows, int columns, int **arr)
+{
+	int rev_diag, i, j, sum_diag, sum_rev;
+	sum_diag = 0;
+	sum_rev = 0;
+	rev_diag = columns - 1;
+
+	for (i = 0; i < rows; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			if (j == i)
+				sum_diag = sum_diag + arr[i][j];
+		}
+	}
+
+	for (i = 0; i < rows; i++)
+	{
+		for (j = 0; j < columns; j++)
+		{
+			if (j == rev_diag)
+				sum_rev = sum_rev + arr[i][j];
+		}
+		--rev_diag;
+	}
+
+	if (sum_diag - sum_rev < 0)
+		return (sum_diag - sum_rev) * -1;
+
+	return sum_diag - sum_rev;
+
+}

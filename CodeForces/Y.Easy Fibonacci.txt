@@ -1,0 +1,38 @@
+#include <iostream>
+
+using namespace std;
+
+void FibonacciSequence(unsigned int Number);
+
+int main()
+{
+    unsigned int number;
+    cin >> number;
+    FibonacciSequence(number);
+
+    return 0;
+}
+
+void FibonacciSequence(unsigned int Number)
+{
+    if (Number == 1)
+        cout << 0;
+    else if (Number == 2)
+        cout << 0 << ' ' << 1;
+    else
+    {
+        unsigned int a = 0, b = 1, c;
+        cout << a << ' ' << b << ' ';
+        while (Number > 2)
+        {
+            cout << a + b;
+            if (Number - 1 > 2)
+                cout << ' ';
+            c = b;
+            b = b + a;
+            a = c;
+            --Number;
+        }
+    }
+    return;
+}

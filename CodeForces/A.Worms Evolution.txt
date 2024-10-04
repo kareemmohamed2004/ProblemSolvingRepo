@@ -1,0 +1,66 @@
+#include<iostream>
+#include<vector>
+#include<unordered_map>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+using namespace std;
+
+int main()
+{
+    unsigned short NumberOfForms, Temp, a, b, c;
+    vector<unsigned short>FormLength;
+    vector<queue<short>> FreqArr;
+    a = b = c = 2000;
+    for (unsigned short i = 0; i < 1001; i++)
+    {
+        queue<short> Q;
+        FreqArr.push_back(Q);
+    }
+
+    cin >> NumberOfForms;
+    for (unsigned short i = 0; i < NumberOfForms; i++)
+    {
+        cin >> Temp;
+        FormLength.push_back(Temp);    
+        FreqArr[FormLength[i]].push(i + 1);
+    }
+
+    sort(FormLength.begin(), FormLength.end(), greater<unsigned short>());
+
+    for (unsigned short i = 0; i < NumberOfForms - 1; i++)
+    {
+        for (unsigned short j = i + 1; j < NumberOfForms; j++)
+        {
+            if (!FreqArr[FormLength[i] - FormLength[j]].empty())
+            {
+                if (!FreqArr[FormLength[i]].empty())
+                {
+                    a = FreqArr[FormLength[i]].front();
+                    FreqArr[FormLength[i]].pop();
+                }
+
+                if (!FreqArr[FormLength[j]].empty())
+                {
+                    b = FreqArr[FormLength[j]].front();
+                    FreqArr[FormLength[j]].pop();
+                }
+
+                if (!FreqArr[FormLength[i] - FormLength[j]].empty())
+                {
+                    c = FreqArr[FormLength[i] - FormLength[j]].front();
+                    FreqArr[FormLength[i] - FormLength[j]].pop();
+                }
+
+                if (a != 2000 && b != 2000 && c != 2000)
+                    cout << a << " " << b << " " << c << "\n";
+                else
+                    cout << -1 << "\n";
+                return 0;
+            }
+        }
+    }
+    cout << -1 << "\n";
+    return 0;
+}

@@ -1,0 +1,56 @@
+#include <iostream>
+#include<cmath>
+
+using namespace std;
+
+unsigned long int PowerCalculation(unsigned long int Base, unsigned long int Power);
+void GetBinaryWithOnlyOnes(unsigned long int Number);
+
+int main()
+{
+
+    unsigned int NumberOfTestCases;
+    unsigned long int number;
+
+    cin >> NumberOfTestCases;
+
+    while (NumberOfTestCases>0)
+    {
+        cin >> number;
+        GetBinaryWithOnlyOnes(number);
+        cout << "\n";
+        --NumberOfTestCases;
+    }
+
+    return 0;
+}
+
+unsigned long int PowerCalculation(unsigned long int Base, unsigned long int Power)
+{
+    if (Power == 0)
+        return 1;
+    return Base * PowerCalculation(Base, Power - 1);
+}
+
+void GetBinaryWithOnlyOnes(unsigned long int Number)
+{
+    unsigned int NumberOfOnes = 0;
+    unsigned int EquivalentNumber=0;
+    unsigned int CounterOfPowers = 0;
+
+    while (Number > 0)
+    {
+        if (Number % 2 != 0)
+            ++NumberOfOnes;
+        Number /= 2;
+    }
+
+    while (NumberOfOnes > 0)
+    {
+        EquivalentNumber += PowerCalculation(2, CounterOfPowers);
+        ++CounterOfPowers;
+        --NumberOfOnes;
+    }
+
+    cout << EquivalentNumber;
+}

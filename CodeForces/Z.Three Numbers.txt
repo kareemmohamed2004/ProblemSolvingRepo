@@ -1,0 +1,30 @@
+#include <iostream>
+
+using namespace std;
+
+void ThreeNumbers(unsigned int K,unsigned int S);
+
+int main()
+{
+    unsigned int k,s;
+    cin>>k>>s;
+    ThreeNumbers(k,s);
+
+    return 0;
+}
+
+void ThreeNumbers(unsigned int K,unsigned int S)
+{
+    unsigned int NumberOfCombinations=0;
+
+    for(unsigned int x=0;x<=S;++x)
+    {
+        for(unsigned int y=0;y<=S;++y)
+        {
+            if(x<=K && y<=K && (S-x-y)<=K && (x+y)<=S)
+                ++NumberOfCombinations;
+        }
+    }
+
+    cout<<NumberOfCombinations;
+}

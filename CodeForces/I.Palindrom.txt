@@ -1,0 +1,32 @@
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+void IfPalindromArray(string Word);
+
+int main()
+{
+	string word;
+	cin >> word;
+
+	IfPalindromArray(word);
+
+	return 0;
+}
+
+void IfPalindromArray(string Word)
+{
+	unsigned int i = 0;
+	for (i = 0; i < (Word.length() / 2); ++i)
+	{
+		if (Word[i] != Word[Word.length() - 1 - i])
+			break;
+	}
+	if (Word.length() % 2 == 0 && i == (Word.length() - i))
+		cout << "YES";
+	else if (Word.length() % 2 != 0 && i + 1 == (Word.length() - i))
+		cout << "YES";
+	else
+		cout << "NO";
+}

@@ -1,0 +1,47 @@
+#include <iostream>
+#include<vector>
+#include <unordered_map>
+using namespace std;
+
+int main()
+{
+    unsigned int PlayerStrength, NumberOfDragons, DragonStrength, DragonBonus;
+    long DragonsBonus[10001];
+
+    for (unsigned int i = 0; i < 10001; i++)
+        DragonsBonus[i] = -1;
+
+    cin >> PlayerStrength >> NumberOfDragons;
+
+    for (unsigned int i = 0; i < NumberOfDragons; i++)
+    {
+        cin >> DragonStrength >> DragonBonus;
+        
+        if (DragonStrength < PlayerStrength)
+            PlayerStrength += DragonBonus;
+        else
+        { 
+            if (DragonsBonus[DragonStrength] == -1)
+                DragonsBonus[DragonStrength] = 0;
+
+            DragonsBonus[DragonStrength] += DragonBonus;
+        }
+    }
+
+    for (unsigned int i = 0; i < 10001; i++)
+    {
+        if (DragonsBonus[i] != -1)
+        {
+            if (i < PlayerStrength)
+                PlayerStrength += DragonsBonus[i];
+            else
+            {
+                cout << "NO" << endl;
+                return 0;
+            }
+        }
+    }
+
+    cout << "YES" << endl;
+    return 0;
+}

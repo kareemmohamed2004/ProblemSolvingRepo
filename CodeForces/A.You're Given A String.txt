@@ -1,0 +1,77 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+using namespace std;
+
+unsigned long long GetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ((unsigned long long)1 << Index);
+}
+
+unsigned long long SetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask | ((unsigned long long)1 << Index);
+}
+
+unsigned long long ClearBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ~((unsigned long long)1 << Index);
+}
+
+unsigned long long ToggleBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask ^ ((unsigned long long)1 << Index);
+}
+
+bool SortByValue(const pair<unsigned int, pair<long long, unsigned int>>& Left, const pair<unsigned int, pair<long long, unsigned int>>& Right)
+{
+    return Left.second.first < Right.second.first;
+}
+
+bool SortByIndex(const pair<unsigned int, pair<long long, unsigned int>>& Left, const pair<unsigned int, pair<long long, unsigned int>>& Right)
+{
+    return Left.first < Right.first;
+}
+
+int main()
+{
+    string Input;
+    unsigned short CurrentIndexOfFirstString, CurrentIndexOfSecondString, TempIndexOfFirstString, TempIndexOfSecondString, LengthOfMaximumTwoStrings, CurrentMaxLength;
+    CurrentIndexOfFirstString = 0;
+    LengthOfMaximumTwoStrings = 0;
+    CurrentMaxLength = 0;
+    cin >> Input;
+    while (CurrentIndexOfFirstString < (Input.size()-1))
+    {
+        CurrentIndexOfSecondString = CurrentIndexOfFirstString + 1;
+        while (CurrentIndexOfSecondString < Input.size())
+        {
+            if (Input[CurrentIndexOfFirstString] != Input[CurrentIndexOfSecondString])
+                ++CurrentIndexOfSecondString;
+            else
+            {
+                TempIndexOfFirstString = CurrentIndexOfFirstString;
+                TempIndexOfSecondString = CurrentIndexOfSecondString;
+                ++TempIndexOfFirstString;
+                ++TempIndexOfSecondString;
+                CurrentMaxLength = 1;
+                while ((TempIndexOfSecondString < Input.size()) && (Input[TempIndexOfFirstString] == Input[TempIndexOfSecondString]))
+                {
+                    ++CurrentMaxLength;
+                    ++TempIndexOfFirstString;
+                    ++TempIndexOfSecondString;
+                }
+                ++CurrentIndexOfSecondString;
+                if (LengthOfMaximumTwoStrings < CurrentMaxLength)
+                    LengthOfMaximumTwoStrings = CurrentMaxLength;
+            }
+        }
+        ++CurrentIndexOfFirstString;
+    }
+    cout << LengthOfMaximumTwoStrings << "\n";
+    return 0;
+}

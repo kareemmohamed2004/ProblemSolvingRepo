@@ -1,0 +1,38 @@
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+void NumberOfWords(string Sentence);
+
+int main()
+{
+	string sentence;
+	getline(cin, sentence);
+	NumberOfWords(sentence);
+	return 0;
+}
+
+void NumberOfWords(string Sentence)
+{
+	unsigned int CounterOfWords = 0;
+	for (unsigned int i = 0; i < Sentence.length(); ++i)
+	{
+		if (CounterOfWords == 0)
+		{
+			if (('A' <= Sentence[i] && Sentence[i] <= 'Z') || ('a' <= Sentence[i] && Sentence[i] <= 'z'))
+			{
+				++CounterOfWords;
+			}
+		}
+		else
+		{
+			if ( ( ('A' <= Sentence[i] && Sentence[i] <= 'Z') || ('a' <= Sentence[i] && Sentence[i] <= 'z') ) && 
+				(Sentence[i-1]==' ' || Sentence[i - 1] == '!' || Sentence[i - 1] == '.' || Sentence[i - 1] == '?' || Sentence[i - 1] == ',') )
+			{
+				++CounterOfWords;
+			}
+		}
+	}
+	cout << CounterOfWords << '\n';
+}

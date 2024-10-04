@@ -1,0 +1,49 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	short NumberOfTestCases, NumberOfArrayElements, IndexOfDifferentElement, * Arr;
+	cin >> NumberOfTestCases;
+
+	for (int i = 0; i < NumberOfTestCases; i++)
+	{
+		cin >> NumberOfArrayElements;
+		IndexOfDifferentElement = -1;
+
+		Arr = new short[NumberOfArrayElements];
+
+		for (int j = 0; j < NumberOfArrayElements; j++)
+			cin >> Arr[j];
+
+		for (int k = 0; k < (NumberOfArrayElements / 2); k++)
+		{
+			if (Arr[k] != Arr[NumberOfArrayElements - k - 1])
+			{
+				if (k + 1 == NumberOfArrayElements - k - 1)
+				{
+					if (Arr[k] != Arr[k - 1])
+						IndexOfDifferentElement = k + 1;
+					else
+						IndexOfDifferentElement = NumberOfArrayElements - k;
+				}
+				else
+				{
+					if (Arr[k] != Arr[k + 1])
+						IndexOfDifferentElement = k + 1;
+					else
+						if (Arr[NumberOfArrayElements - k - 1] != Arr[NumberOfArrayElements - k - 2])
+							IndexOfDifferentElement = NumberOfArrayElements - k;
+				}
+				break;
+			}
+		}
+
+		if (IndexOfDifferentElement == -1 && NumberOfArrayElements % 2 != 0)
+			IndexOfDifferentElement = (NumberOfArrayElements / 2) + 1;
+
+		cout << IndexOfDifferentElement << endl;
+		delete[]Arr;
+	}
+	return 0;
+}

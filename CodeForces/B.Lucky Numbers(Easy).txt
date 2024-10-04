@@ -1,0 +1,153 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<algorithm>
+#include<bitset>
+using namespace std;
+
+unsigned long long GetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ((unsigned long long)1 << Index);
+}
+
+unsigned long long SetBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask | ((unsigned long long)1 << Index);
+}
+
+unsigned long long ClearBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask & ~((unsigned long long)1 << Index);
+}
+
+unsigned long long ToggleBit(unsigned long long Mask, unsigned short Index)
+{
+    return Mask ^ ((unsigned long long)1 << Index);
+}
+
+unsigned long long IsLuckyNumber(unsigned long long Mask, unsigned short NumberOfDigits)
+{
+    unsigned short NumberOfFours, NumberOfSevens, LuckyNumbers[2] = { 4,7 };
+    NumberOfFours = NumberOfSevens = 0;
+    unsigned long long Base, Result = 0;
+    Base = 1;
+    bool BitValue = false;
+    Result = 0;
+    for (unsigned short i = 0; i < NumberOfDigits; i++)
+    {
+        BitValue = GetBit(Mask, i);
+        Result += Base * LuckyNumbers[BitValue];
+        Base *= 10;
+        if (BitValue)
+            ++NumberOfSevens;
+        else
+            ++NumberOfFours;
+
+        if ((NumberOfDigits / 2) < NumberOfFours || (NumberOfDigits / 2) < NumberOfSevens)
+            return 0;
+    }
+    return Result;
+}
+
+int main()
+{
+    unsigned long long Input, MinimumDifference, Temp, OutPut, Base;
+    unsigned short NumberOfDigitsInInput, NumberOfFours, NumberOfSevens;
+    unsigned short LuckyNumbers[2] = { 4,7 };
+    NumberOfDigitsInInput = 0;
+    NumberOfFours = 0;
+    NumberOfSevens = 0;
+    OutPut = 0;
+    MinimumDifference = 2000000000;
+    cin >> Input;
+    Temp = Input;
+    while (Temp)
+    {
+        if (Temp % 10 == 4)
+            ++NumberOfFours;
+        if (Temp % 10 == 7)
+            ++NumberOfSevens;
+
+        Temp /= 10;
+        ++NumberOfDigitsInInput;
+    }
+
+    if ((NumberOfFours == NumberOfSevens) && ((NumberOfFours + NumberOfSevens) == NumberOfDigitsInInput))
+        OutPut = Input;
+    else
+    {
+        if (NumberOfDigitsInInput % 2 != 0)
+        {
+            Base = 1;
+            unsigned short i = 0;
+            while (i < ((NumberOfDigitsInInput + 1) / 2))
+            {
+                OutPut += (unsigned long long)Base * (unsigned long long)LuckyNumbers[1];
+                Base *= 10;
+                ++i;
+            }
+            i = 0;
+            while (i < ((NumberOfDigitsInInput + 1) / 2))
+            {
+                OutPut += (unsigned long long)Base * (unsigned long long)LuckyNumbers[0];
+                Base *= 10;
+                ++i;
+            }
+        }
+        else
+        {
+            for (unsigned long long Mask = 0; Mask < (1 << (unsigned long long)NumberOfDigitsInInput); Mask++)
+            {
+                Temp = IsLuckyNumber(Mask, NumberOfDigitsInInput);
+                if (Input < Temp && (Temp - Input) < MinimumDifference)
+                {
+                    MinimumDifference = (Temp - Input);
+                    OutPut = Temp;
+                }
+            }
+
+            if (!OutPut)
+            {
+                Base = 1;
+                unsigned short i = 0;
+                while (i < ((NumberOfDigitsInInput) / 2))
+                {
+                    OutPut += (unsigned long long)Base * (unsigned long long)LuckyNumbers[1];
+                    Base *= 10;
+                    ++i;
+                }
+                i = 0;
+                while (i < ((NumberOfDigitsInInput) / 2))
+                {
+                    OutPut += (unsigned long long)Base * (unsigned long long)LuckyNumbers[0];
+                    Base *= 10;
+                    ++i;
+                }
+
+                if (OutPut < Input)
+                {
+                    OutPut = 0;
+                    Base = 1;
+                    unsigned short i = 0;
+                    while (i < ((NumberOfDigitsInInput + 2) / 2))
+                    {
+                        OutPut += (unsigned long long)Base * (unsigned long long)LuckyNumbers[1];
+                        Base *= 10;
+                        ++i;
+                    }
+                    i = 0;
+                    while (i < ((NumberOfDigitsInInput + 2) / 2))
+                    {
+                        OutPut += (unsigned long long)Base * (unsigned long long)LuckyNumbers[0];
+                        Base *= 10;
+                        ++i;
+                    }
+                }
+            }
+        }
+    }
+    cout << OutPut << "\n";
+    return 0;
+}

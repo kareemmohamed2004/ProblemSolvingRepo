@@ -1,0 +1,30 @@
+#include <iostream>
+
+using namespace std;
+
+bool RightOrWrong(int a,char s,int b);
+
+int main()
+{
+    int a,b;
+    char s;
+
+    cin>>a>>s>>b;
+
+    if(RightOrWrong(a,s,b))
+        cout<<"Right";
+    else
+        cout<<"Wrong";
+
+    return 0;
+}
+
+bool RightOrWrong(int a,char s,int b)
+{
+    if(s=='<')
+        return a<b;
+    else if(s=='>')
+        return a>b;
+    else
+        return a==b;
+}

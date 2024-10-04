@@ -1,0 +1,42 @@
+#include<iostream>
+#include<stdio.h>
+#include<stdlib.h>
+
+using namespace std;
+
+int main()
+{
+	unsigned int A, B;
+	char* Code;
+	bool Flag = false;
+	cin >> A;
+	cin >> B;
+	Code = (char*)malloc((A + B + 1+1) * sizeof(char));
+	unsigned int i;
+
+	for (i = 0; i < (A + B + 1); ++i)
+	{
+		cin >> Code[i];
+		if (i == A)
+		{
+			if (Code[i] == '-')
+				Flag = true;
+		}
+		else
+		{
+			if ('0' <= Code[i] && Code[i] <= '9')
+				continue;
+			else
+				Flag = false;
+		}
+	}
+
+	Code[i] = '\0';
+
+	if (Flag)
+		cout << "Yes\n";
+	else
+		cout << "No\n";
+
+	return 0;
+}

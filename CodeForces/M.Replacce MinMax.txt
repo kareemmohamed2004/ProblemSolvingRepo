@@ -1,0 +1,61 @@
+#include<iostream>
+#include<stdio.h>
+#include<stdlib.h>
+
+using namespace std;
+
+int main()
+{
+	int* Numbers;
+	unsigned int Size;
+	cin >> Size;
+	Numbers = (int*)malloc(Size * (sizeof(int)));
+	unsigned int i;
+	int Max, Min,PositionOfMin,PositionOfMax,Cup;
+
+	cin >> Numbers[0];
+	cin >> Numbers[1];
+	if (Numbers[0] < Numbers[1])
+	{
+		Max = Numbers[1];
+		PositionOfMax = 1;
+
+		Min = Numbers[0];
+		PositionOfMin = 0;
+	}
+	else
+	{
+		Max = Numbers[0];
+		PositionOfMax = 0;
+
+		Min = Numbers[1];
+		PositionOfMin = 1;
+	}
+
+	for (i = 2; i < Size; ++i)
+	{
+		cin >> Numbers[i];
+		if (Max < Numbers[i])
+		{
+			Max = Numbers[i];
+			PositionOfMax = i;
+		}
+		else
+		{
+			if (Numbers[i] < Min)
+			{
+				Min = Numbers[i];
+				PositionOfMin = i;
+			}
+		}
+	}
+
+	Cup = Numbers[PositionOfMax];
+	Numbers[PositionOfMax] = Numbers[PositionOfMin];
+	Numbers[PositionOfMin] = Cup;
+
+	for (i = 0; i < Size; i++)
+		cout << Numbers[i] << ' ';
+
+	return 0;
+}
