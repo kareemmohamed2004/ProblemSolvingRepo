@@ -1,0 +1,70 @@
+class Solution {
+public:
+    Solution()
+    {
+        this->countOfLeftOpen = 0;
+        this->countOfRightClose = 0;
+        this->leftIndexToBeSwapped = 0;
+        this->rightIndexToBeSwapped = 0;
+        this->countOfSwaps = 0;
+    }
+    int minSwaps(string s) 
+    {
+        rightIndexToBeSwapped = s.size() - 1;
+        char temp;
+        while (leftIndexToBeSwapped < rightIndexToBeSwapped)
+        {
+            leftIndexToBeSwapped = MoveFromLeftToRight(leftIndexToBeSwapped, rightIndexToBeSwapped, s);
+            rightIndexToBeSwapped = MoveFromRightToLeft(leftIndexToBeSwapped, rightIndexToBeSwapped, s);
+            if (leftIndexToBeSwapped < rightIndexToBeSwapped)
+            {
+                temp = s[leftIndexToBeSwapped];
+                s[leftIndexToBeSwapped] = s[rightIndexToBeSwapped];
+                s[rightIndexToBeSwapped] = temp;
+                ++countOfLeftOpen;
+                ++countOfRightClose;
+                ++leftIndexToBeSwapped;
+                --rightIndexToBeSwapped;
+                ++countOfSwaps;
+            }
+        }
+        return countOfSwaps;
+    }
+private:
+    unsigned int countOfLeftOpen, countOfRightClose, leftIndexToBeSwapped, rightIndexToBeSwapped, countOfSwaps;
+    int MoveFromLeftToRight(unsigned int leftIndex, unsigned int rightIndex, string& s)
+    {
+        while (leftIndex < rightIndex)
+        {
+            if (s[leftIndex] == '[')
+                ++countOfLeftOpen;
+            else
+            {
+                if (countOfLeftOpen > 0)
+                    --countOfLeftOpen;
+                else
+                    break;
+            }
+            ++leftIndex;
+        }
+        return leftIndex;
+    }
+
+    int MoveFromRightToLeft(unsigned int leftIndex, unsigned int rightIndex, string& s)
+    {
+        while (leftIndex < rightIndex)
+        {
+            if (s[rightIndex] == ']')
+                ++countOfRightClose;
+            else
+            {
+                if (countOfRightClose > 0)
+                    --countOfRightClose;
+                else
+                    break;
+            }
+            --rightIndex;
+        }
+        return rightIndex;
+    }
+};

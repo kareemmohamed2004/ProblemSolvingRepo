@@ -1,0 +1,124 @@
+class Solution {
+public:
+    int slidingPuzzle(vector<vector<int>>& board) 
+    {
+        string currentBoardStringRepresentation = ConvertInteger2DArrayToString(board);
+        return Solve(currentBoardStringRepresentation);
+    }
+private:
+    const string TARGET_STATE = "123450";
+    int Solve(string currentBoard)
+    {
+        if (currentBoard == TARGET_STATE)
+            return 0;
+
+        unordered_map<string, unsigned short> visitedStates;
+        queue<pair<string, unsigned short>> states;
+        vector<string> childStringStates;
+        string currentStringState;
+        unsigned short currentStateSwaps;
+        states.push(make_pair(currentBoard, 0));
+
+        while (!states.empty())
+        {
+            pair<string, unsigned short> currentState = states.front();
+            currentStringState = currentState.first;
+            currentStateSwaps = currentState.second;
+            states.pop();
+
+            if (visitedStates.find(currentStringState) != visitedStates.end())
+            {
+                if (currentStateSwaps < visitedStates[currentStringState])
+                {
+                    visitedStates[currentStringState] = currentStateSwaps;
+                    if (currentStringState != TARGET_STATE)
+                    {
+                        childStringStates = GetChildStates(currentStringState);
+                        for (unsigned int i = 0; i < childStringStates.size(); i++)
+                            states.push(make_pair(childStringStates[i], currentStateSwaps + 1));
+                    }
+                }
+            }
+            else
+            {
+                visitedStates.insert(currentState);
+                if (currentStringState != TARGET_STATE)
+                {
+                    childStringStates = GetChildStates(currentStringState);
+                    for (unsigned int i = 0; i < childStringStates.size(); i++)
+                        states.push(make_pair(childStringStates[i], currentStateSwaps + 1));
+                }
+            }
+        }
+
+        if (visitedStates.find(TARGET_STATE) != visitedStates.end())
+            return visitedStates[TARGET_STATE];
+        return -1;
+    }
+
+    vector<string> GetChildStates(string currentStringState)
+    {
+        unsigned short zeroCurrentIndex = GetIndexOfZero(currentStringState);
+        vector<string> newStringStates;
+        if (IsValidSwap(zeroCurrentIndex, 'U'))
+            newStringStates.push_back(Swap(currentStringState, zeroCurrentIndex, zeroCurrentIndex - 3));
+        if (IsValidSwap(zeroCurrentIndex, 'D'))
+            newStringStates.push_back(Swap(currentStringState, zeroCurrentIndex, zeroCurrentIndex + 3));
+        if (IsValidSwap(zeroCurrentIndex, 'R'))
+            newStringStates.push_back(Swap(currentStringState, zeroCurrentIndex, zeroCurrentIndex + 1));
+        if (IsValidSwap(zeroCurrentIndex, 'L'))
+            newStringStates.push_back(Swap(currentStringState, zeroCurrentIndex, zeroCurrentIndex - 1));
+        
+        return newStringStates;
+    }
+
+    bool IsValidSwap(const unsigned short& index, const char& direction)
+    {
+        // 6 is the string size, it is a constant value
+        // 3 is the number of columns in the original 2D array which is represented as a string.
+        switch (direction)
+        {
+        case 'U':
+        case 'u':
+            return 0 <= (index - 3);
+        case 'D':
+        case 'd':
+            return (index + 3) < 6;
+        case 'R':
+        case 'r':
+            return (index % 3) < 2;
+        case 'L':
+        case 'l':
+            return 0 < (index % 3);
+        default:
+            return false;
+        }
+    }
+
+    unsigned short GetIndexOfZero(string board)
+    {
+        for (unsigned short i = 0; i < board.size(); ++i)
+            if (board[i] == '0')
+                return i;
+
+        return USHRT_MAX;
+    }
+
+    string ConvertInteger2DArrayToString(vector<vector<int>> board)
+    {
+        string result = "";
+        for (unsigned short i = 0; i < board.size(); i++)
+            for (unsigned short j = 0; j < board[i].size(); j++)
+                result = result + to_string(board[i][j]);
+        return result;
+    }
+
+    string Swap(const string &originalString, int firstCharIndex, int secondCharIndex)
+    {
+        string result = originalString;
+        char temp = result[firstCharIndex];
+        result[firstCharIndex] = result[secondCharIndex];
+        result[secondCharIndex] = temp;
+        return result;
+    }
+};
