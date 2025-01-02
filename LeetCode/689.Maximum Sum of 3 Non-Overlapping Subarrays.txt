@@ -1,0 +1,149 @@
+class Solution {
+public:
+    vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) 
+    {
+        string** DP = GetDPTable(nums.size(), 3);
+        vector<unsigned int> prefixSum = GetPrefixSum(nums);
+        vector<int> result = ConvertStringToInt(StringSplit(Solve(nums, 0, 3, k, prefixSum, DP), ','));
+        Dispose(DP, nums.size(), 3);
+        return result;
+    }
+private:
+    string Solve(vector<int>& nums, int startingIndex, int numberOfRequiredSubarrays, int& subarraysLength, vector<unsigned int>& prefixSum, string**& DP)
+    {
+        unsigned int currentSubrrayLength = nums.size() - startingIndex;
+        if (currentSubrrayLength < (numberOfRequiredSubarrays * subarraysLength))
+            return "-1";
+
+        if (DP[startingIndex][numberOfRequiredSubarrays - 1] != "")
+            return DP[startingIndex][numberOfRequiredSubarrays - 1];
+
+        string includeCurrentIndex = to_string(startingIndex);
+        if (0 < (numberOfRequiredSubarrays - 1))
+            includeCurrentIndex +=  "," + Solve(nums, startingIndex + subarraysLength, numberOfRequiredSubarrays - 1, subarraysLength, prefixSum, DP);
+
+        string excludeCurrentIndex = Solve(nums, startingIndex + 1, numberOfRequiredSubarrays, subarraysLength, prefixSum, DP);
+
+        string betterChoice = GetBetterChoice(includeCurrentIndex, excludeCurrentIndex, subarraysLength, prefixSum);
+        DP[startingIndex][numberOfRequiredSubarrays - 1] = betterChoice;
+        return betterChoice;
+    }
+    
+    string GetBetterChoice(string include, string exclude, int& subarrayLength, vector<unsigned int>& prefixSum)
+    {
+        bool isValidInclude = true;
+        bool isValidExclude = true;
+        unsigned int includeSum = 0;
+        unsigned int excludeSum = 0;
+        int currentIndex;
+        vector<int> includeSubarraysStartingIndices = ConvertStringToInt(StringSplit(include, ','));
+        vector<int> excludeSubarraysStartingIndices = ConvertStringToInt(StringSplit(exclude, ','));
+        
+        for (unsigned int i = 0; i < includeSubarraysStartingIndices.size(); i++)
+        {
+            currentIndex = includeSubarraysStartingIndices[i];
+            if (currentIndex == -1)
+            {
+                isValidInclude = false;
+                break;
+            }
+            if (currentIndex < 1)
+                includeSum += prefixSum[currentIndex + subarrayLength - 1];
+            else
+                includeSum += prefixSum[currentIndex + subarrayLength - 1] - prefixSum[currentIndex - 1];
+        }
+
+        for (unsigned int i = 0; i < excludeSubarraysStartingIndices.size(); i++)
+        {
+            currentIndex = excludeSubarraysStartingIndices[i];
+            if (currentIndex == -1)
+            {
+                isValidExclude = false;
+                break;
+            }
+            if (currentIndex < 1)
+                excludeSum += prefixSum[currentIndex + subarrayLength - 1];
+            else
+                excludeSum += prefixSum[currentIndex + subarrayLength - 1] - prefixSum[currentIndex - 1];
+        }
+
+        if ((!isValidInclude && !isValidExclude) || (isValidInclude && !isValidExclude))
+            return include;
+        if (isValidExclude && !isValidInclude)
+            return exclude;
+
+        if (excludeSum < includeSum)
+            return include;
+        if (includeSum < excludeSum)
+            return exclude;
+
+        if (include < exclude)
+            return include;
+        else
+            return exclude;
+    }
+
+    vector<unsigned int> GetPrefixSum(vector<int> &nums)
+    {
+        vector<unsigned int> prefixSum;
+        prefixSum.push_back(nums[0]);
+        for (unsigned int i = 1; i < nums.size(); i++)
+            prefixSum.push_back(prefixSum[i - 1] + nums[i]);
+
+        return prefixSum;
+    }
+
+    vector<int> ConvertStringToInt(vector<string> strings)
+    {
+        int temp;
+        vector<int> result;
+        for (unsigned int i = 0; i < strings.size(); i++)
+        {
+            temp = stoi(strings[i]);
+            result.push_back(temp);
+        }
+        return result;
+    }
+    
+    vector<string> StringSplit(string originalString, char separator)
+    {
+        string temp = "";
+        vector<string> result;
+        for (unsigned int i = 0; i < originalString.size(); i++)
+        {
+            if (originalString[i] != separator)
+                temp += originalString[i];
+            else
+            {
+                if (0 < temp.size())
+                {
+                    result.push_back(temp);
+                    temp = "";
+                }
+            }
+        }
+        if (0 < temp.size())
+            result.push_back(temp);
+        return result;
+    }
+    
+    string** GetDPTable(int rows, int columns)
+    {
+        string** DP = new string *[rows];
+        for (int i = 0; i < rows; i++)
+        {
+            DP[i] = new string[columns];
+            for (int j = 0; j < columns; j++)
+                DP[i][j] = "";
+        }
+        return DP;
+    }
+    
+    void Dispose(string**& DP, int rows, int columns)
+    {
+        for (int i = 0; i < rows; i++)
+            delete[] DP[i];
+
+        delete[] DP;
+    }
+};

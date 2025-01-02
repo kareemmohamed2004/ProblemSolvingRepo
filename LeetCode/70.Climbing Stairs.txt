@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int climbStairs(int n) 
+    {
+        if(n < 4)
+            return n;
+
+        int totalStairs = n;
+        int currentStair = 0;
+        vector<int> visited(n + 1, 0);
+        return Solve(currentStair + 1, totalStairs, visited) + Solve(currentStair + 2, totalStairs, visited);
+    }
+private:
+    int Solve(int currentStair, const int &totalStairs, vector<int> &visited)
+    {
+        if(totalStairs < currentStair)
+            return 0;
+        if(currentStair == totalStairs)
+            return 1;
+        
+        if(visited[currentStair])
+            return visited[currentStair];
+        
+        int result = Solve(currentStair + 1, totalStairs, visited) + Solve(currentStair + 2, totalStairs, visited);
+        visited[currentStair] = result;
+        return result;
+    }
+};

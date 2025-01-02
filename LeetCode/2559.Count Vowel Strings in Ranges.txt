@@ -1,0 +1,74 @@
+class Solution {
+public:
+    vector<int> vowelStrings(vector<string>& words, vector<vector<int>>& queries) 
+    {
+        vector<unsigned int> vowelsPrefixSum = GetPrefixSumOfVowelStartingWords(words);
+        vector<int> queriesAnswers;
+        unsigned int left, right, currentQueryAnswer;
+        for (int i = 0; i < queries.size(); i++)
+        {
+            left = queries[i][0];
+            right = queries[i][1];
+            if (left == 0)
+                currentQueryAnswer = vowelsPrefixSum[right];
+            else
+                currentQueryAnswer = vowelsPrefixSum[right] - vowelsPrefixSum[left - 1];
+
+            queriesAnswers.push_back(currentQueryAnswer);
+        }
+        return queriesAnswers;
+    }
+private:
+    vector<unsigned int> GetPrefixSumOfVowelStartingWords(vector<string>& words)
+    {
+        vector<bool> isVowelStartingWord;
+        vector<unsigned int> VowelStartingWordPrefixSum;
+        string currentWord;
+        bool startsWithVowel, endsWithVowel;
+        int currentSum;
+        for (int i = 0; i < words.size(); i++)
+        {
+            currentWord = words[i];
+            switch (currentWord[0])
+            {
+            case 'a':
+            case 'e':
+            case 'i':
+            case 'o':
+            case 'u':
+                startsWithVowel = true;
+                break;
+            default:
+                startsWithVowel = false;
+                break;
+            }
+
+            switch (currentWord[currentWord.size() - 1])
+            {
+            case 'a':
+            case 'e':
+            case 'i':
+            case 'o':
+            case 'u':
+                endsWithVowel = true;
+                break;
+            default:
+                endsWithVowel = false;
+                break;
+            }
+
+            if (startsWithVowel & endsWithVowel)
+                isVowelStartingWord.push_back(true);
+            else
+                isVowelStartingWord.push_back(false);
+
+        }
+        VowelStartingWordPrefixSum.push_back(isVowelStartingWord[0]);
+        for (int i = 1; i < isVowelStartingWord.size(); i++)
+        {
+            currentSum = VowelStartingWordPrefixSum[i - 1] + isVowelStartingWord[i];
+            VowelStartingWordPrefixSum.push_back(currentSum);
+        }
+        return VowelStartingWordPrefixSum;
+    }
+};
