@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int xorAllNums(vector<int>& nums1, vector<int>& nums2) 
+    {
+        int result = 0;
+
+        if(!(nums2.size() & true))
+            for(int i = 0; i < nums1.size(); ++i)
+                nums1[i] = 0;
+
+        if(!(nums1.size() & true))
+            for(int i = 0; i < nums2.size(); ++i)
+                nums2[i] = 0;
+
+        if(!(nums1.size() & true) & !(nums2.size() & true))
+            return 0;
+
+        if(nums2.size() & true)
+            for(int i = 0; i < nums1.size(); ++i)
+                result ^= nums1[i];
+
+        if(nums1.size() & true)
+            for(int i = 0; i < nums2.size(); ++i)
+                result ^= nums2[i];
+        
+        return result;
+    }
+};
