@@ -1,0 +1,99 @@
+class Solution {
+public:
+    int minimizeXor(int num1, int num2)
+    {
+        int numberOfSetBitsInNum1, numberOfSetBitsInNum2;
+        numberOfSetBitsInNum2 = GetNumberOfSetBits(num2);
+        numberOfSetBitsInNum1 = GetNumberOfSetBits(num1);
+        if (numberOfSetBitsInNum2 == numberOfSetBitsInNum1)
+            return num1;
+
+        vector<bool> num1Bits = GetBits(num1);
+        return ConvertBitsToNumber(GenerateBits(num1Bits, numberOfSetBitsInNum2));
+    }
+private:
+    int GetNumberOfSetBits(int num)
+    {
+        int countOfSetBits = 0;
+        while (num)
+        {
+            if (num & true)
+                ++countOfSetBits;
+
+            num = num >> true;
+        }
+        return countOfSetBits;
+    }
+
+    vector<bool> GetBits(int num)
+    {
+        vector<bool> indices;
+        while (num)
+        {
+            if (num & true)
+                indices.emplace_back(true);
+            else
+                indices.emplace_back(false);
+
+            num = num >> true;
+        }
+        return indices;
+    }
+
+    vector<bool> GenerateBits(vector<bool> bits, int countOfSetBits)
+    {
+        vector<bool> result;
+        for (int i = bits.size() - 1; i >= 0; --i)
+        {
+            if (bits[i])
+            {
+                if (countOfSetBits)
+                {
+                    result.emplace_back(true);
+                    --countOfSetBits;
+                }
+                else
+                    result.emplace_back(false);
+            }
+            else
+                result.emplace_back(false);
+        }
+
+        if (countOfSetBits)
+        {
+            for (int i = result.size()-1; i >= 0; i--)
+            {
+                if (!result[i])
+                {
+                    if (countOfSetBits)
+                    {
+                        result[i] = true;
+                        --countOfSetBits;
+                    }
+                    else
+                        break;
+                }
+            }
+        }
+
+        while (countOfSetBits)
+        {
+            result.emplace_back(true);
+            --countOfSetBits;
+        }
+        return result;
+    }
+
+    int ConvertBitsToNumber(vector<bool> bits)
+    {
+        int result = 0, temp = 1;
+        for (int i = bits.size() - 1; i >= 0; --i)
+        {
+            if (bits[i])
+                result += temp;
+
+            temp *= 2;
+        }
+        return result;
+    }
+};
