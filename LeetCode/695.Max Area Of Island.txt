@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int maxAreaOfIsland(vector<vector<int>>& grid)
+    {
+        int result = 0;
+        vector<vector<bool>>visited;
+        queue<pair<int, int>> onesCoordinates;
+        pair<int, int> currentOnesCoordinates;
+        for (int i = 0; i < grid.size(); ++i)
+        {
+            vector<bool> temp;
+            for (int j = 0; j < grid[i].size(); ++j)
+            {
+                temp.emplace_back(false);
+                if (grid[i][j])
+                    onesCoordinates.push(make_pair(i, j));
+            }
+            visited.emplace_back(temp);
+        }
+
+        while (!onesCoordinates.empty())
+        {
+            currentOnesCoordinates = onesCoordinates.front();
+            onesCoordinates.pop();
+            int currentSize = 0;
+            Solve(grid, visited, currentSize, result, currentOnesCoordinates.first, currentOnesCoordinates.second);
+        }
+        return result;
+    }
+private:
+    void Solve(vector<vector<int>>& grid, vector<vector<bool>>& visited, int &currentSize, int& maxSize, int row, int column)
+    {
+        if (row < 0 || row >= grid.size() || column < 0 || column >= grid[0].size() || visited[row][column] || !grid[row][column])
+            return;
+
+        ++currentSize;
+        if (maxSize < currentSize)
+            maxSize = currentSize;
+
+        visited[row][column] = true;
+        Solve(grid, visited, currentSize, maxSize, row, column + 1);
+        Solve(grid, visited, currentSize, maxSize, row, column - 1);
+        Solve(grid, visited, currentSize, maxSize, row + 1, column);
+        Solve(grid, visited, currentSize, maxSize, row - 1, column);
+    }
+};
