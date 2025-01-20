@@ -1,0 +1,29 @@
+#include <unordered_map>
+class Solution {
+public:
+    int firstCompleteIndex(vector<int>& arr, vector<vector<int>>& mat) 
+    {
+        int numberOfRows = mat.size(), numberOfColumns = mat[0].size();
+        pair<int, int> currentNumberLocation;
+        vector<int> rows(numberOfRows, 0);
+        vector<int> columns(numberOfColumns, 0);
+        unordered_map<int, pair<int,int>> numbersLocations;
+        for(int i = 0; i < numberOfRows; ++i)
+        {
+            for(int j = 0; j < numberOfColumns; ++j)
+                numbersLocations[mat[i][j]] = make_pair(i, j);
+        }
+        for(int i = 0; i < arr.size(); ++i)
+        {
+            currentNumberLocation = numbersLocations[arr[i]];
+            ++rows[currentNumberLocation.first];
+            if(rows[currentNumberLocation.first] == numberOfColumns)
+                return i;
+            
+            ++columns[currentNumberLocation.second];
+            if(columns[currentNumberLocation.second] == numberOfRows)
+                return i;
+        }
+        return 0;
+    }
+};
