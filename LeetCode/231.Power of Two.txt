@@ -1,0 +1,20 @@
+class Solution {
+public:
+    bool isPowerOfTwo(int n) 
+    {
+        if(!n)
+            return false;
+        bool isOneExist = false;
+        while(n)
+        {
+            if(isOneExist)
+                return false;
+
+            if(n & true)
+                isOneExist = true;
+            
+            n = n >> 1;
+        }
+        return true;
+    }
+};
