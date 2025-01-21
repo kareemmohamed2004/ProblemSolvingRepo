@@ -1,45 +1,33 @@
-//wrong solution
-
 class Solution {
 public:
-    long long gridGame(vector<vector<int>>& grid) 
+    long long gridGame(vector<vector<int>>& grid)
     {
-        vector<vector<long long>> firstRobotDP;
-        vector<vector<long long>> secondRobotDP;
-        for(int i = 0; i < grid.size(); ++i)
+        vector<long long> firstRowPrefixSum;
+        vector<long long> secondRowPrefixSum;
+        long long firstRobotScore, secondRobotScore, MIN = LLONG_MAX;
+        int columnsCount = grid[0].size();
+        firstRowPrefixSum.emplace_back(grid[0][0]);
+        secondRowPrefixSum.emplace_back(grid[1][0]);
+        for (int i = 1; i < columnsCount; i++)
         {
-            vector<long long> firstTemp;
-            vector<long long> secondTemp;
-            for(int j = 0; j < grid[i].size(); ++j)
+            firstRowPrefixSum.emplace_back(firstRowPrefixSum[i - 1] + grid[0][i]);
+            secondRowPrefixSum.emplace_back(secondRowPrefixSum[i - 1] + grid[1][i]);
+        }
+        for (int i = 0; i < firstRowPrefixSum.size(); i++)
+        {
+            if (i == 0)
             {
-                firstTemp.emplace_back(-1);
-                secondTemp.emplace_back(-1);
-            }            
-            firstRobotDP.emplace_back(firstTemp);
-            secondRobotDP.emplace_back(secondTemp);
+                firstRobotScore = firstRowPrefixSum[i] + secondRowPrefixSum[columnsCount - 1];
+                secondRobotScore = firstRowPrefixSum[columnsCount - 1] - firstRowPrefixSum[i];
+            }
+            else
+            {
+                firstRobotScore = firstRowPrefixSum[i] + (secondRowPrefixSum[columnsCount - 1] - secondRowPrefixSum[i - 1]);
+                secondRobotScore = max((firstRowPrefixSum[columnsCount - 1] - firstRowPrefixSum[i]), secondRowPrefixSum[i - 1]);
+            }
+            if (secondRobotScore < MIN)
+                MIN = secondRobotScore;
         }
-        Solve(0, 0, grid, firstRobotDP, true);
-        return Solve(0, 0, grid, secondRobotDP, false);
-    }
-private:
-    int Solve(int row, int column, vector<vector<int>>& grid, vector<vector<long long>>& DP, bool isFirstRobot)
-    {
-        if(grid.size() <= row || grid[row].size() <= column)
-            return 0;
-        if(DP[row][column] != -1)
-            return DP[row][column];
-        
-        int firstOption = Solve(row + 1, column, grid, DP, isFirstRobot);
-        int secondOption = Solve(row, column + 1, grid, DP, isFirstRobot);
-        DP[row][column] = grid[row][column] + (firstOption < secondOption ? secondOption : firstOption);
-
-        if(isFirstRobot)
-        {
-            if(firstOption < secondOption && (column + 1) < grid[row].size())
-                grid[row][column + 1] = 0;
-            if(secondOption < firstOption && (row + 1) < grid.size())
-                grid[row + 1][column] = 0;
-        }
-        return grid[row][column];
+        return MIN;
     }
 };
