@@ -1,0 +1,32 @@
+class ProductOfNumbers {
+public:
+    ProductOfNumbers() {
+        numsPrefixMultiplication.emplace_back(1);
+    }
+    
+    void add(int num) {
+        int lastIndex = numsPrefixMultiplication.size() - 1;
+        unsigned int lastNumber = numsPrefixMultiplication[lastIndex];
+        if(lastNumber)
+            numsPrefixMultiplication.emplace_back(lastNumber * num);
+        else
+            numsPrefixMultiplication.emplace_back(num);
+
+        if(!num)
+            lastZeroIndex = lastIndex + 1;
+    }
+    
+    int getProduct(int k) {
+        int lastIndex = numsPrefixMultiplication.size() - 1;
+
+        if((lastIndex - (k - 1)) <= lastZeroIndex)
+            return 0;
+        if((lastIndex - k) == lastZeroIndex)
+            return numsPrefixMultiplication[lastIndex];
+
+        return numsPrefixMultiplication[lastIndex] / numsPrefixMultiplication[lastIndex - k];
+    }
+private:
+    vector<unsigned long long> numsPrefixMultiplication;
+    int lastZeroIndex = -1;
+};
